@@ -1,0 +1,329 @@
+version: "ARINC 424-20 Procedures"
+
+routing:
+  P:
+    C: SID
+    D: STAR
+    E: APPROACH
+    M: MISSED_APPROACH
+
+schemas:
+  SID:
+    colspecs:
+      - [0, 1]     # RecordType
+      - [1, 4]     # CustomerAreaCode
+      - [4, 5]     # SectionCode
+      - [5, 6]     # SubsectionCode
+      - [6, 10]    # RegionCode
+      - [10, 12]   # ICAOCode
+      - [12, 13]   # Subsection
+      - [13, 17]   # AirportIdentifier
+      - [17, 23]   # ProcedureIdentifier
+      - [23, 24]   # RouteType
+      - [24, 29]   # TransitionIdentifier
+      - [29, 32]   # SequenceNumber
+      - [32, 34]   # PathTerminator
+      - [34, 39]   # FixIdentifier
+      - [39, 41]   # ICAOCode2
+      - [41, 42]   # TurnDirection
+      - [42, 47]   # RecommendedNavaid
+      - [47, 52]   # ArcRadius
+      - [52, 57]   # Theta
+      - [57, 62]   # Rho
+      - [62, 67]   # Course
+      - [67, 72]   # Distance
+      - [72, 77]   # AltitudeDescription
+      - [77, 82]   # Altitude1
+      - [82, 87]   # Altitude2
+      - [87, 92]   # SpeedLimit
+      - [92, 97]   # SpeedLimitDescription
+      - [98, 123]  # ProcedureNameDescription
+      - [123, 128] # FileRecordNo
+      - [128, 132] # CycleDate
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirportIdentifier
+      - ProcedureIdentifier
+      - RouteType
+      - TransitionIdentifier
+      - SequenceNumber
+      - PathTerminator
+      - FixIdentifier
+      - ICAOCode2
+      - TurnDirection
+      - RecommendedNavaid
+      - ArcRadius
+      - Theta
+      - Rho
+      - Course
+      - Distance
+      - AltitudeDescription
+      - Altitude1
+      - Altitude2
+      - SpeedLimit
+      - SpeedLimitDescription
+      - ProcedureNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  STAR:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]
+      - [17, 23]
+      - [23, 24]
+      - [24, 29]
+      - [29, 32]
+      - [32, 34]
+      - [34, 39]
+      - [39, 41]
+      - [41, 42]
+      - [42, 47]
+      - [47, 52]
+      - [52, 57]
+      - [57, 62]
+      - [62, 67]
+      - [67, 72]
+      - [72, 77]
+      - [77, 82]
+      - [82, 87]
+      - [87, 92]
+      - [92, 97]
+      - [98, 123]
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirportIdentifier
+      - ProcedureIdentifier
+      - RouteType
+      - TransitionIdentifier
+      - SequenceNumber
+      - PathTerminator
+      - FixIdentifier
+      - ICAOCode2
+      - TurnDirection
+      - RecommendedNavaid
+      - ArcRadius
+      - Theta
+      - Rho
+      - Course
+      - Distance
+      - AltitudeDescription
+      - Altitude1
+      - Altitude2
+      - SpeedLimit
+      - SpeedLimitDescription
+      - ProcedureNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  APPROACH:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]
+      - [17, 23]
+      - [23, 24]
+      - [24, 29]
+      - [29, 32]
+      - [32, 34]
+      - [34, 39]
+      - [39, 41]
+      - [41, 42]
+      - [42, 47]
+      - [47, 52]
+      - [52, 57]
+      - [57, 62]
+      - [62, 67]
+      - [67, 72]
+      - [72, 77]
+      - [77, 82]
+      - [82, 87]
+      - [87, 92]
+      - [92, 97]
+      - [98, 123]
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirportIdentifier
+      - ProcedureIdentifier
+      - RouteType
+      - TransitionIdentifier
+      - SequenceNumber
+      - PathTerminator
+      - FixIdentifier
+      - ICAOCode2
+      - TurnDirection
+      - RecommendedNavaid
+      - ArcRadius
+      - Theta
+      - Rho
+      - Course
+      - Distance
+      - AltitudeDescription
+      - Altitude1
+      - Altitude2
+      - SpeedLimit
+      - SpeedLimitDescription
+      - ProcedureNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  MISSED_APPROACH:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]
+      - [17, 23]
+      - [23, 24]
+      - [24, 29]
+      - [29, 32]
+      - [32, 34]
+      - [34, 39]
+      - [39, 41]
+      - [41, 42]
+      - [42, 47]
+      - [47, 52]
+      - [52, 57]
+      - [57, 62]
+      - [62, 67]
+      - [67, 72]
+      - [72, 77]
+      - [77, 82]
+      - [82, 87]
+      - [87, 92]
+      - [92, 97]
+      - [98, 123]
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirportIdentifier
+      - ProcedureIdentifier
+      - RouteType
+      - TransitionIdentifier
+      - SequenceNumber
+      - PathTerminator
+      - FixIdentifier
+      - ICAOCode2
+      - TurnDirection
+      - RecommendedNavaid
+      - ArcRadius
+      - Theta
+      - Rho
+      - Course
+      - Distance
+      - AltitudeDescription
+      - Altitude1
+      - Altitude2
+      - SpeedLimit
+      - SpeedLimitDescription
+      - ProcedureNameDescription
+      - FileRecordNo
+      - CycleDate
+
+metadata:
+  SID:
+    description: "Standard Instrument Departure procedure leg record"
+    record_length: 132
+    max_continuations: 3
+
+  STAR:
+    description: "Standard Terminal Arrival procedure leg record"
+    record_length: 132
+    max_continuations: 3
+
+  APPROACH:
+    description: "Instrument approach procedure leg record"
+    record_length: 132
+    max_continuations: 3
+
+  MISSED_APPROACH:
+    description: "Missed approach procedure leg record"
+    record_length: 132
+    max_continuations: 3
+
+continuation_rules:
+  SID:
+    - ProcedureNameDescription
+  STAR:
+    - ProcedureNameDescription
+  APPROACH:
+    - ProcedureNameDescription
+  MISSED_APPROACH:
+    - ProcedureNameDescription
+
+validation_rules:
+  SID:
+    - field: AirportIdentifier
+      rule: non_empty
+    - field: ProcedureIdentifier
+      rule: non_empty
+    - field: PathTerminator
+      rule: non_empty
+
+  STAR:
+    - field: AirportIdentifier
+      rule: non_empty
+    - field: ProcedureIdentifier
+      rule: non_empty
+    - field: PathTerminator
+      rule: non_empty
+
+  APPROACH:
+    - field: AirportIdentifier
+      rule: non_empty
+    - field: ProcedureIdentifier
+      rule: non_empty
+    - field: PathTerminator
+      rule: non_empty
+
+  MISSED_APPROACH:
+    - field: AirportIdentifier
+      rule: non_empty
+    - field: ProcedureIdentifier
+      rule: non_empty
+    - field: PathTerminator
+      rule: non_empty

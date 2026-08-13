@@ -1,0 +1,303 @@
+version: "ARINC 424-20 Navigation Aids"
+
+routing:
+  L:
+    I: LOCALIZER
+    G: GLIDESLOPE
+    D: LOCALIZER_DME
+  M:
+    L: MLS
+  G:
+    L: GLS
+
+schemas:
+  LOCALIZER:
+    colspecs:
+      - [0, 1]     # RecordType
+      - [1, 4]     # CustomerAreaCode
+      - [4, 5]     # SectionCode (L)
+      - [5, 6]     # SubsectionCode (I)
+      - [6, 10]    # RegionCode
+      - [10, 12]   # ICAOCode
+      - [12, 13]   # Subsection
+      - [13, 17]   # LocalizerIdentifier
+      - [17, 21]   # RunwayIdentifier
+      - [21, 25]   # Frequency
+      - [25, 29]   # Category
+      - [29, 32]   # BackCourseAvailable
+      - [32, 41]   # LocalizerLatitude
+      - [41, 51]   # LocalizerLongitude
+      - [51, 55]   # LocalizerBearing
+      - [55, 59]   # LocalizerWidth
+      - [59, 63]   # LocalizerLength
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # LocalizerNameDescription
+      - [123, 128] # FileRecordNo
+      - [128, 132] # CycleDate
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - LocalizerIdentifier
+      - RunwayIdentifier
+      - Frequency
+      - Category
+      - BackCourseAvailable
+      - LocalizerLatitude
+      - LocalizerLongitude
+      - LocalizerBearing
+      - LocalizerWidth
+      - LocalizerLength
+      - MagneticVariation
+      - LocalizerNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  GLIDESLOPE:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # GlideslopeIdentifier (usually same as runway)
+      - [17, 21]   # RunwayIdentifier
+      - [21, 25]   # Frequency
+      - [25, 29]   # GlideAngle
+      - [29, 33]   # ThresholdCrossingHeight
+      - [32, 41]   # GlideslopeLatitude
+      - [41, 51]   # GlideslopeLongitude
+      - [51, 55]   # GlideslopeBearing
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # GlideslopeNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - GlideslopeIdentifier
+      - RunwayIdentifier
+      - Frequency
+      - GlideAngle
+      - ThresholdCrossingHeight
+      - GlideslopeLatitude
+      - GlideslopeLongitude
+      - GlideslopeBearing
+      - MagneticVariation
+      - GlideslopeNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  LOCALIZER_DME:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # LocalizerIdentifier
+      - [17, 21]   # RunwayIdentifier
+      - [21, 25]   # DMEChannel
+      - [25, 29]   # DMEElevation
+      - [29, 33]   # DMEOffset
+      - [32, 41]   # DMELatitude
+      - [41, 51]   # DMELongitude
+      - [51, 55]   # DMEBearing
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # LocalizerDMENameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - LocalizerIdentifier
+      - RunwayIdentifier
+      - DMEChannel
+      - DMEElevation
+      - DMEOffset
+      - DMELatitude
+      - DMELongitude
+      - DMEBearing
+      - MagneticVariation
+      - LocalizerDMENameDescription
+      - FileRecordNo
+      - CycleDate
+
+  MLS:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # MLSIdentifier
+      - [17, 21]   # RunwayIdentifier
+      - [21, 25]   # Frequency
+      - [25, 29]   # GlideAngle
+      - [29, 33]   # AzimuthWidth
+      - [32, 41]   # MLSLatitude
+      - [41, 51]   # MLSLongitude
+      - [51, 55]   # MLSBearing
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # MLSNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - MLSIdentifier
+      - RunwayIdentifier
+      - Frequency
+      - GlideAngle
+      - AzimuthWidth
+      - MLSLatitude
+      - MLSLongitude
+      - MLSBearing
+      - MagneticVariation
+      - MLSNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  GLS:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # GLSIdentifier
+      - [17, 21]   # RunwayIdentifier
+      - [21, 25]   # GLSChannel
+      - [25, 29]   # GlideAngle
+      - [29, 33]   # ReferencePathData
+      - [32, 41]   # GLSLatitude
+      - [41, 51]   # GLSLongitude
+      - [51, 55]   # GLSBearing
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # GLSNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - GLSIdentifier
+      - RunwayIdentifier
+      - GLSChannel
+      - GlideAngle
+      - ReferencePathData
+      - GLSLatitude
+      - GLSLongitude
+      - GLSBearing
+      - MagneticVariation
+      - GLSNameDescription
+      - FileRecordNo
+      - CycleDate
+
+metadata:
+  LOCALIZER:
+    description: "ILS localizer facility record"
+    record_length: 132
+    max_continuations: 2
+
+  GLIDESLOPE:
+    description: "ILS glideslope facility record"
+    record_length: 132
+    max_continuations: 2
+
+  LOCALIZER_DME:
+    description: "ILS localizer paired with DME"
+    record_length: 132
+    max_continuations: 2
+
+  MLS:
+    description: "Microwave Landing System facility record"
+    record_length: 132
+    max_continuations: 2
+
+  GLS:
+    description: "GBAS Landing System facility record"
+    record_length: 132
+    max_continuations: 2
+
+continuation_rules:
+  LOCALIZER:
+    - LocalizerNameDescription
+  GLIDESLOPE:
+    - GlideslopeNameDescription
+  LOCALIZER_DME:
+    - LocalizerDMENameDescription
+  MLS:
+    - MLSNameDescription
+  GLS:
+    - GLSNameDescription
+
+validation_rules:
+  LOCALIZER:
+    - field: LocalizerIdentifier
+      rule: non_empty
+    - field: RunwayIdentifier
+      rule: non_empty
+    - field: Frequency
+      rule: non_empty
+
+  GLIDESLOPE:
+    - field: GlideslopeIdentifier
+      rule: non_empty
+    - field: RunwayIdentifier
+      rule: non_empty
+    - field: Frequency
+      rule: non_empty
+
+  LOCALIZER_DME:
+    - field: LocalizerIdentifier
+      rule: non_empty
+    - field: DMEChannel
+      rule: non_empty
+
+  MLS:
+    - field: MLSIdentifier
+      rule: non_empty
+    - field: RunwayIdentifier
+      rule: non_empty
+    - field: Frequency
+      rule: non_empty
+
+  GLS:
+    - field: GLSIdentifier
+      rule: non_empty
+    - field: RunwayIdentifier
+      rule: non_empty
+    - field: GLSChannel
+      rule: non_empty

@@ -1,0 +1,243 @@
+version: "ARINC 424-20 Airways"
+
+routing:
+  E:
+    R: ENROUTE_AIRWAY
+  P:
+    R: TERMINAL_AIRWAY
+  U:
+    R: UPPER_AIRWAY
+  V:
+    R: RNAV_AIRWAY
+
+schemas:
+  ENROUTE_AIRWAY:
+    colspecs:
+      - [0, 1]     # RecordType
+      - [1, 4]     # CustomerAreaCode
+      - [4, 5]     # SectionCode
+      - [5, 6]     # SubsectionCode
+      - [6, 10]    # RegionCode
+      - [10, 12]   # ICAOCode
+      - [12, 13]   # Subsection
+      - [13, 18]   # AirwayIdentifier
+      - [19, 21]   # ICAOCode2
+      - [21, 22]   # ContinuationRecordNo
+      - [26, 29]   # FromWaypoint
+      - [30, 33]   # ToWaypoint
+      - [33, 36]   # MinimumAltitude
+      - [36, 39]   # MaximumAltitude
+      - [41, 44]   # AirwayType
+      - [44, 47]   # AirwayDirection
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # AirwayNameDescription
+      - [123, 128] # FileRecordNo
+      - [128, 132] # CycleDate
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirwayIdentifier
+      - ICAOCode2
+      - ContinuationRecordNo
+      - FromWaypoint
+      - ToWaypoint
+      - MinimumAltitude
+      - MaximumAltitude
+      - AirwayType
+      - AirwayDirection
+      - MagneticVariation
+      - AirwayNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  TERMINAL_AIRWAY:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 18]
+      - [19, 21]
+      - [21, 22]
+      - [26, 29]
+      - [30, 33]
+      - [33, 36]
+      - [36, 39]
+      - [41, 44]
+      - [44, 47]
+      - [74, 79]
+      - [98, 123]
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirwayIdentifier
+      - ICAOCode2
+      - ContinuationRecordNo
+      - FromWaypoint
+      - ToWaypoint
+      - MinimumAltitude
+      - MaximumAltitude
+      - AirwayType
+      - AirwayDirection
+      - MagneticVariation
+      - AirwayNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  UPPER_AIRWAY:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 18]
+      - [19, 21]
+      - [21, 22]
+      - [26, 29]
+      - [30, 33]
+      - [33, 36]
+      - [36, 39]
+      - [41, 44]
+      - [44, 47]
+      - [74, 79]
+      - [98, 123]
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirwayIdentifier
+      - ICAOCode2
+      - ContinuationRecordNo
+      - FromWaypoint
+      - ToWaypoint
+      - MinimumAltitude
+      - MaximumAltitude
+      - AirwayType
+      - AirwayDirection
+      - MagneticVariation
+      - AirwayNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  RNAV_AIRWAY:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 18]
+      - [19, 21]
+      - [21, 22]
+      - [26, 29]
+      - [30, 33]
+      - [33, 36]
+      - [36, 39]
+      - [41, 44]
+      - [44, 47]
+      - [74, 79]
+      - [98, 123]
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirwayIdentifier
+      - ICAOCode2
+      - ContinuationRecordNo
+      - FromWaypoint
+      - ToWaypoint
+      - MinimumAltitude
+      - MaximumAltitude
+      - AirwayType
+      - AirwayDirection
+      - MagneticVariation
+      - AirwayNameDescription
+      - FileRecordNo
+      - CycleDate
+
+metadata:
+  ENROUTE_AIRWAY:
+    description: "Standard enroute airway segment"
+    record_length: 132
+    max_continuations: 3
+
+  TERMINAL_AIRWAY:
+    description: "Terminal airway segment"
+    record_length: 132
+    max_continuations: 3
+
+  UPPER_AIRWAY:
+    description: "Upper-level airway segment"
+    record_length: 132
+    max_continuations: 3
+
+  RNAV_AIRWAY:
+    description: "RNAV airway segment"
+    record_length: 132
+    max_continuations: 3
+
+continuation_rules:
+  ENROUTE_AIRWAY:
+    - AirwayNameDescription
+
+  TERMINAL_AIRWAY:
+    - AirwayNameDescription
+
+  UPPER_AIRWAY:
+    - AirwayNameDescription
+
+  RNAV_AIRWAY:
+    - AirwayNameDescription
+
+validation_rules:
+  ENROUTE_AIRWAY:
+    - field: AirwayIdentifier
+      rule: non_empty
+    - field: FromWaypoint
+      rule: non_empty
+    - field: ToWaypoint
+      rule: non_empty
+
+  TERMINAL_AIRWAY:
+    - field: AirwayIdentifier
+      rule: non_empty
+
+  UPPER_AIRWAY:
+    - field: AirwayIdentifier
+      rule: non_empty
+
+  RNAV_AIRWAY:
+    - field: AirwayIdentifier
+      rule: non_empty

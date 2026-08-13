@@ -1,0 +1,231 @@
+version: "ARINC 424-20 Company Route Legs"
+
+routing:
+  C:
+    L: COMPANY_ROUTE_LEG
+    A: COMPANY_ROUTE_ALTERNATE_LEG
+    X: COMPANY_ROUTE_CONDITIONAL_LEG
+
+schemas:
+  COMPANY_ROUTE_LEG:
+    colspecs:
+      - [0, 1]     # RecordType
+      - [1, 4]     # CustomerAreaCode
+      - [4, 5]     # SectionCode (C)
+      - [5, 6]     # SubsectionCode (L)
+      - [6, 10]    # RegionCode
+      - [10, 12]   # ICAOCode
+      - [12, 13]   # Subsection
+      - [13, 21]   # CompanyRouteIdentifier
+      - [21, 25]   # OriginAirport
+      - [25, 29]   # DestinationAirport
+      - [29, 32]   # SequenceNumber
+      - [32, 37]   # FixIdentifier
+      - [37, 39]   # ICAOCode2
+      - [39, 41]   # PathTerminator
+      - [41, 46]   # Course
+      - [46, 51]   # Distance
+      - [51, 56]   # AltitudeDescription
+      - [56, 61]   # Altitude1
+      - [61, 66]   # Altitude2
+      - [66, 71]   # SpeedLimit
+      - [71, 76]   # SpeedLimitDescription
+      - [76, 81]   # TurnDirection
+      - [81, 86]   # Theta
+      - [86, 91]   # Rho
+      - [91, 96]   # ArcRadius
+      - [98, 123]  # LegNameDescription
+      - [123, 128] # FileRecordNo
+      - [128, 132] # CycleDate
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - CompanyRouteIdentifier
+      - OriginAirport
+      - DestinationAirport
+      - SequenceNumber
+      - FixIdentifier
+      - ICAOCode2
+      - PathTerminator
+      - Course
+      - Distance
+      - AltitudeDescription
+      - Altitude1
+      - Altitude2
+      - SpeedLimit
+      - SpeedLimitDescription
+      - TurnDirection
+      - Theta
+      - Rho
+      - ArcRadius
+      - LegNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  COMPANY_ROUTE_ALTERNATE_LEG:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 21]   # CompanyRouteIdentifier
+      - [21, 25]   # AlternateIdentifier
+      - [25, 29]   # SequenceNumber
+      - [29, 34]   # FixIdentifier
+      - [34, 36]   # ICAOCode2
+      - [36, 38]   # PathTerminator
+      - [38, 43]   # Course
+      - [43, 48]   # Distance
+      - [48, 53]   # AltitudeDescription
+      - [53, 58]   # Altitude1
+      - [58, 63]   # Altitude2
+      - [63, 68]   # SpeedLimit
+      - [68, 73]   # SpeedLimitDescription
+      - [73, 78]   # TurnDirection
+      - [78, 83]   # Theta
+      - [83, 88]   # Rho
+      - [88, 93]   # ArcRadius
+      - [98, 123]  # AlternateLegDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - CompanyRouteIdentifier
+      - AlternateIdentifier
+      - SequenceNumber
+      - FixIdentifier
+      - ICAOCode2
+      - PathTerminator
+      - Course
+      - Distance
+      - AltitudeDescription
+      - Altitude1
+      - Altitude2
+      - SpeedLimit
+      - SpeedLimitDescription
+      - TurnDirection
+      - Theta
+      - Rho
+      - ArcRadius
+      - AlternateLegDescription
+      - FileRecordNo
+      - CycleDate
+
+  COMPANY_ROUTE_CONDITIONAL_LEG:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 21]   # CompanyRouteIdentifier
+      - [21, 25]   # ConditionCode
+      - [25, 29]   # SequenceNumber
+      - [29, 34]   # FixIdentifier
+      - [34, 36]   # ICAOCode2
+      - [36, 38]   # PathTerminator
+      - [38, 43]   # Course
+      - [43, 48]   # Distance
+      - [48, 53]   # AltitudeDescription
+      - [53, 58]   # Altitude1
+      - [58, 63]   # Altitude2
+      - [63, 68]   # SpeedLimit
+      - [68, 73]   # SpeedLimitDescription
+      - [73, 78]   # TurnDirection
+      - [78, 83]   # Theta
+      - [83, 88]   # Rho
+      - [88, 93]   # ArcRadius
+      - [93, 98]   # ActivationSchedule
+      - [98, 123]  # ConditionalLegDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - CompanyRouteIdentifier
+      - ConditionCode
+      - SequenceNumber
+      - FixIdentifier
+      - ICAOCode2
+      - PathTerminator
+      - Course
+      - Distance
+      - AltitudeDescription
+      - Altitude1
+      - Altitude2
+      - SpeedLimit
+      - SpeedLimitDescription
+      - TurnDirection
+      - Theta
+      - Rho
+      - ArcRadius
+      - ActivationSchedule
+      - ConditionalLegDescription
+      - FileRecordNo
+      - CycleDate
+
+metadata:
+  COMPANY_ROUTE_LEG:
+    description: "Primary company route leg"
+    record_length: 132
+    max_continuations: 4
+
+  COMPANY_ROUTE_ALTERNATE_LEG:
+    description: "Alternate routing leg for company route"
+    record_length: 132
+    max_continuations: 4
+
+  COMPANY_ROUTE_CONDITIONAL_LEG:
+    description: "Conditional leg for company route"
+    record_length: 132
+    max_continuations: 4
+
+continuation_rules:
+  COMPANY_ROUTE_LEG:
+    - LegNameDescription
+
+  COMPANY_ROUTE_ALTERNATE_LEG:
+    - AlternateLegDescription
+
+  COMPANY_ROUTE_CONDITIONAL_LEG:
+    - ConditionalLegDescription
+
+validation_rules:
+  COMPANY_ROUTE_LEG:
+    - field: CompanyRouteIdentifier
+      rule: non_empty
+    - field: FixIdentifier
+      rule: non_empty
+
+  COMPANY_ROUTE_ALTERNATE_LEG:
+    - field: CompanyRouteIdentifier
+      rule: non_empty
+    - field: AlternateIdentifier
+      rule: non_empty
+
+  COMPANY_ROUTE_CONDITIONAL_LEG:
+    - field: CompanyRouteIdentifier
+      rule: non_empty
+    - field: ConditionCode
+      rule: non_empty

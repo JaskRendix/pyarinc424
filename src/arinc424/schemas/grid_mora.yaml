@@ -1,0 +1,65 @@
+version: "ARINC 424-20 Grid MORA"
+
+routing:
+  G:
+    M: GRID_MORA
+
+schemas:
+  GRID_MORA:
+    colspecs:
+      - [0, 1]     # RecordType
+      - [1, 4]     # CustomerAreaCode
+      - [4, 5]     # SectionCode (G)
+      - [5, 6]     # SubsectionCode (M)
+      - [6, 10]    # RegionCode
+      - [10, 12]   # ICAOCode
+      - [12, 13]   # Subsection
+      - [13, 15]   # LatitudeBand
+      - [15, 18]   # LongitudeBand
+      - [18, 22]   # MORAAltitude
+      - [22, 26]   # MORAType
+      - [26, 29]   # ContinuationRecordNo
+      - [32, 41]   # Latitude
+      - [41, 51]   # Longitude
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # MORANameDescription
+      - [123, 128] # FileRecordNo
+      - [128, 132] # CycleDate
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - LatitudeBand
+      - LongitudeBand
+      - MORAAltitude
+      - MORAType
+      - ContinuationRecordNo
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - MORANameDescription
+      - FileRecordNo
+      - CycleDate
+
+metadata:
+  GRID_MORA:
+    description: "Grid Minimum Off-Route Altitude record"
+    record_length: 132
+    max_continuations: 1
+
+continuation_rules:
+  GRID_MORA:
+    - MORANameDescription
+
+validation_rules:
+  GRID_MORA:
+    - field: LatitudeBand
+      rule: non_empty
+    - field: LongitudeBand
+      rule: non_empty
+    - field: MORAAltitude
+      rule: non_empty

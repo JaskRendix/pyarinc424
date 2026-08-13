@@ -1,0 +1,345 @@
+version: "ARINC 424-20 Waypoints"
+
+routing:
+  E:
+    A: TERMINAL_WAYPOINT
+    P: PATH_POINT
+    T: TERMINAL_RNAV_WAYPOINT
+    H: HOLDING_FIX
+    W: WAYPOINT_FLAGS
+    C: CODED_WAYPOINT
+
+schemas:
+  TERMINAL_WAYPOINT:
+    colspecs:
+      - [0, 1]     # RecordType
+      - [1, 4]     # CustomerAreaCode
+      - [4, 5]     # SectionCode (E)
+      - [5, 6]     # SubsectionCode (A)
+      - [6, 10]    # RegionCode
+      - [10, 12]   # ICAOCode
+      - [12, 13]   # Subsection
+      - [13, 18]   # WaypointIdentifier
+      - [19, 21]   # ICAOCode2
+      - [21, 22]   # ContinuationRecordNo
+      - [26, 29]   # WaypointType
+      - [30, 31]   # WaypointUsage
+      - [32, 41]   # Latitude
+      - [41, 51]   # Longitude
+      - [74, 79]   # MagneticVariation
+      - [84, 87]   # DatumCode
+      - [95, 98]   # NameFormatIndicator
+      - [98, 123]  # WaypointNameDescription
+      - [123, 128] # FileRecordNo
+      - [128, 132] # CycleDate
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - WaypointIdentifier
+      - ICAOCode2
+      - ContinuationRecordNo
+      - WaypointType
+      - WaypointUsage
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - DatumCode
+      - NameFormatIndicator
+      - WaypointNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  PATH_POINT:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 18]   # PathPointIdentifier
+      - [19, 21]
+      - [21, 22]
+      - [26, 29]   # PathPointType
+      - [30, 31]
+      - [32, 41]
+      - [41, 51]
+      - [74, 79]
+      - [84, 87]
+      - [95, 98]
+      - [98, 123]  # PathPointNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - PathPointIdentifier
+      - ICAOCode2
+      - ContinuationRecordNo
+      - PathPointType
+      - PathPointUsage
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - DatumCode
+      - NameFormatIndicator
+      - PathPointNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  TERMINAL_RNAV_WAYPOINT:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 18]   # RNAVWaypointIdentifier
+      - [19, 21]
+      - [21, 22]
+      - [26, 29]   # RNAVWaypointType
+      - [30, 31]
+      - [32, 41]
+      - [41, 51]
+      - [74, 79]
+      - [84, 87]
+      - [95, 98]
+      - [98, 123]  # RNAVWaypointNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - RNAVWaypointIdentifier
+      - ICAOCode2
+      - ContinuationRecordNo
+      - RNAVWaypointType
+      - RNAVWaypointUsage
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - DatumCode
+      - NameFormatIndicator
+      - RNAVWaypointNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  HOLDING_FIX:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 18]   # HoldingFixIdentifier
+      - [19, 21]
+      - [21, 22]
+      - [26, 29]   # HoldingType
+      - [30, 31]
+      - [32, 41]
+      - [41, 51]
+      - [74, 79]
+      - [84, 87]
+      - [95, 98]
+      - [98, 123]  # HoldingFixNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - HoldingFixIdentifier
+      - ICAOCode2
+      - ContinuationRecordNo
+      - HoldingType
+      - HoldingUsage
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - DatumCode
+      - NameFormatIndicator
+      - HoldingFixNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  WAYPOINT_FLAGS:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 18]   # WaypointIdentifier
+      - [19, 21]
+      - [21, 22]
+      - [26, 29]   # FlyByFlyOverFlag
+      - [30, 31]
+      - [32, 41]
+      - [41, 51]
+      - [74, 79]
+      - [84, 87]
+      - [95, 98]
+      - [98, 123]  # WaypointFlagDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - WaypointIdentifier
+      - ICAOCode2
+      - ContinuationRecordNo
+      - FlyByFlyOverFlag
+      - WaypointUsage
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - DatumCode
+      - NameFormatIndicator
+      - WaypointFlagDescription
+      - FileRecordNo
+      - CycleDate
+
+  CODED_WAYPOINT:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 18]   # CodedWaypointIdentifier (5LNC)
+      - [19, 21]
+      - [21, 22]
+      - [26, 29]   # CodedWaypointType
+      - [30, 31]
+      - [32, 41]
+      - [41, 51]
+      - [74, 79]
+      - [84, 87]
+      - [95, 98]
+      - [98, 123]  # CodedWaypointNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - CodedWaypointIdentifier
+      - ICAOCode2
+      - ContinuationRecordNo
+      - CodedWaypointType
+      - CodedWaypointUsage
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - DatumCode
+      - NameFormatIndicator
+      - CodedWaypointNameDescription
+      - FileRecordNo
+      - CycleDate
+
+metadata:
+  TERMINAL_WAYPOINT:
+    description: "Terminal waypoint record"
+    record_length: 132
+    max_continuations: 3
+
+  PATH_POINT:
+    description: "Path point record"
+    record_length: 132
+    max_continuations: 3
+
+  TERMINAL_RNAV_WAYPOINT:
+    description: "Terminal RNAV waypoint record"
+    record_length: 132
+    max_continuations: 3
+
+  HOLDING_FIX:
+    description: "Holding fix waypoint record"
+    record_length: 132
+    max_continuations: 3
+
+  WAYPOINT_FLAGS:
+    description: "Fly-by / Fly-over waypoint flags"
+    record_length: 132
+    max_continuations: 1
+
+  CODED_WAYPOINT:
+    description: "Coded RNAV waypoint (5LNC)"
+    record_length: 132
+    max_continuations: 3
+
+continuation_rules:
+  TERMINAL_WAYPOINT:
+    - WaypointNameDescription
+  PATH_POINT:
+    - PathPointNameDescription
+  TERMINAL_RNAV_WAYPOINT:
+    - RNAVWaypointNameDescription
+  HOLDING_FIX:
+    - HoldingFixNameDescription
+  WAYPOINT_FLAGS:
+    - WaypointFlagDescription
+  CODED_WAYPOINT:
+    - CodedWaypointNameDescription
+
+validation_rules:
+  TERMINAL_WAYPOINT:
+    - field: WaypointIdentifier
+      rule: non_empty
+
+  PATH_POINT:
+    - field: PathPointIdentifier
+      rule: non_empty
+
+  TERMINAL_RNAV_WAYPOINT:
+    - field: RNAVWaypointIdentifier
+      rule: non_empty
+
+  HOLDING_FIX:
+    - field: HoldingFixIdentifier
+      rule: non_empty
+
+  WAYPOINT_FLAGS:
+    - field: WaypointIdentifier
+      rule: non_empty
+
+  CODED_WAYPOINT:
+    - field: CodedWaypointIdentifier
+      rule: non_empty

@@ -1,0 +1,325 @@
+version: "ARINC 424-20 Airport Infrastructure"
+
+routing:
+  P:
+    T: TAXIWAY
+    S: STAND
+    L: RUNWAY_LIGHTING
+    K: RUNWAY_MARKINGS
+    W: SURFACE_CONDITION
+    V: AIRPORT_SERVICE
+
+schemas:
+  TAXIWAY:
+    colspecs:
+      - [0, 1]     # RecordType
+      - [1, 4]     # CustomerAreaCode
+      - [4, 5]     # SectionCode (P)
+      - [5, 6]     # SubsectionCode (T)
+      - [6, 10]    # RegionCode
+      - [10, 12]   # ICAOCode
+      - [12, 13]   # Subsection
+      - [13, 17]   # AirportIdentifier
+      - [17, 21]   # TaxiwayIdentifier
+      - [21, 25]   # TaxiwayType
+      - [25, 29]   # SurfaceType
+      - [29, 32]   # Width
+      - [32, 41]   # StartLatitude
+      - [41, 51]   # StartLongitude
+      - [51, 60]   # EndLatitude
+      - [60, 70]   # EndLongitude
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # TaxiwayNameDescription
+      - [123, 128] # FileRecordNo
+      - [128, 132] # CycleDate
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirportIdentifier
+      - TaxiwayIdentifier
+      - TaxiwayType
+      - SurfaceType
+      - Width
+      - StartLatitude
+      - StartLongitude
+      - EndLatitude
+      - EndLongitude
+      - MagneticVariation
+      - TaxiwayNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  STAND:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # AirportIdentifier
+      - [17, 21]   # StandIdentifier
+      - [21, 25]   # StandType
+      - [25, 29]   # AircraftSizeCategory
+      - [29, 32]   # PushbackRequired
+      - [32, 41]   # StandLatitude
+      - [41, 51]   # StandLongitude
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # StandNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirportIdentifier
+      - StandIdentifier
+      - StandType
+      - AircraftSizeCategory
+      - PushbackRequired
+      - StandLatitude
+      - StandLongitude
+      - MagneticVariation
+      - StandNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  RUNWAY_LIGHTING:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # AirportIdentifier
+      - [17, 21]   # RunwayIdentifier
+      - [21, 25]   # LightingSystemType
+      - [25, 29]   # IntensityLevel
+      - [29, 32]   # ActivationMethod
+      - [32, 41]   # Latitude
+      - [41, 51]   # Longitude
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # LightingNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirportIdentifier
+      - RunwayIdentifier
+      - LightingSystemType
+      - IntensityLevel
+      - ActivationMethod
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - LightingNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  RUNWAY_MARKINGS:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # AirportIdentifier
+      - [17, 21]   # RunwayIdentifier
+      - [21, 25]   # MarkingType
+      - [25, 29]   # MarkingCondition
+      - [29, 32]   # MarkingColor
+      - [32, 41]   # Latitude
+      - [41, 51]   # Longitude
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # MarkingNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirportIdentifier
+      - RunwayIdentifier
+      - MarkingType
+      - MarkingCondition
+      - MarkingColor
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - MarkingNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  SURFACE_CONDITION:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # AirportIdentifier
+      - [17, 21]   # RunwayIdentifier
+      - [21, 25]   # ConditionType
+      - [25, 29]   # FrictionCoefficient
+      - [29, 32]   # ContaminantDepth
+      - [32, 41]   # Latitude
+      - [41, 51]   # Longitude
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # SurfaceConditionDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirportIdentifier
+      - RunwayIdentifier
+      - ConditionType
+      - FrictionCoefficient
+      - ContaminantDepth
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - SurfaceConditionDescription
+      - FileRecordNo
+      - CycleDate
+
+  AIRPORT_SERVICE:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # AirportIdentifier
+      - [17, 21]   # ServiceIdentifier
+      - [21, 25]   # ServiceType
+      - [25, 29]   # Availability
+      - [29, 32]   # ActivationMethod
+      - [32, 41]   # Latitude
+      - [41, 51]   # Longitude
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # ServiceNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirportIdentifier
+      - ServiceIdentifier
+      - ServiceType
+      - Availability
+      - ActivationMethod
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - ServiceNameDescription
+      - FileRecordNo
+      - CycleDate
+
+metadata:
+  TAXIWAY:
+    description: "Airport taxiway infrastructure record"
+    record_length: 132
+    max_continuations: 2
+
+  STAND:
+    description: "Aircraft parking stand record"
+    record_length: 132
+    max_continuations: 2
+
+  RUNWAY_LIGHTING:
+    description: "Runway lighting system record"
+    record_length: 132
+    max_continuations: 2
+
+  RUNWAY_MARKINGS:
+    description: "Runway markings record"
+    record_length: 132
+    max_continuations: 2
+
+  SURFACE_CONDITION:
+    description: "Runway surface condition record"
+    record_length: 132
+    max_continuations: 2
+
+  AIRPORT_SERVICE:
+    description: "Airport service record"
+    record_length: 132
+    max_continuations: 2
+
+continuation_rules:
+  TAXIWAY:
+    - TaxiwayNameDescription
+  STAND:
+    - StandNameDescription
+  RUNWAY_LIGHTING:
+    - LightingNameDescription
+  RUNWAY_MARKINGS:
+    - MarkingNameDescription
+  SURFACE_CONDITION:
+    - SurfaceConditionDescription
+  AIRPORT_SERVICE:
+    - ServiceNameDescription
+
+validation_rules:
+  TAXIWAY:
+    - field: TaxiwayIdentifier
+      rule: non_empty
+
+  STAND:
+    - field: StandIdentifier
+      rule: non_empty
+
+  RUNWAY_LIGHTING:
+    - field: RunwayIdentifier
+      rule: non_empty
+
+  RUNWAY_MARKINGS:
+    - field: RunwayIdentifier
+      rule: non_empty
+
+  SURFACE_CONDITION:
+    - field: RunwayIdentifier
+      rule: non_empty
+
+  AIRPORT_SERVICE:
+    - field: ServiceIdentifier
+      rule: non_empty

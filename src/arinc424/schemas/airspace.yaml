@@ -1,0 +1,217 @@
+version: "ARINC 424-20 Airspace"
+
+routing:
+  U:
+    A: CONTROLLED_AIRSPACE
+  F:
+    I: FIR
+  R:
+    I: UIR
+
+schemas:
+  CONTROLLED_AIRSPACE:
+    colspecs:
+      - [0, 1]     # RecordType
+      - [1, 4]     # CustomerAreaCode
+      - [4, 5]     # SectionCode (U)
+      - [5, 6]     # SubsectionCode (A)
+      - [6, 10]    # RegionCode
+      - [10, 12]   # ICAOCode
+      - [12, 13]   # Subsection
+      - [13, 17]   # AirspaceIdentifier
+      - [17, 18]   # AirspaceClass
+      - [18, 19]   # BoundaryVia
+      - [19, 23]   # BoundaryPoint
+      - [23, 24]   # ICAOCode2
+      - [24, 29]   # LowerLimit
+      - [29, 34]   # UpperLimit
+      - [34, 39]   # AirspaceType
+      - [39, 44]   # AirspaceControl
+      - [44, 47]   # TimeCode
+      - [47, 52]   # Frequency
+      - [52, 57]   # Sectorization
+      - [57, 62]   # BoundaryArcRadius
+      - [62, 67]   # BoundaryTheta
+      - [67, 72]   # BoundaryRho
+      - [98, 123]  # AirspaceNameDescription
+      - [123, 128] # FileRecordNo
+      - [128, 132] # CycleDate
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirspaceIdentifier
+      - AirspaceClass
+      - BoundaryVia
+      - BoundaryPoint
+      - ICAOCode2
+      - LowerLimit
+      - UpperLimit
+      - AirspaceType
+      - AirspaceControl
+      - TimeCode
+      - Frequency
+      - Sectorization
+      - BoundaryArcRadius
+      - BoundaryTheta
+      - BoundaryRho
+      - AirspaceNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  FIR:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]     # SectionCode F
+      - [5, 6]     # SubsectionCode I
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # FIRIdentifier
+      - [17, 18]   # FIRClass
+      - [18, 19]   # BoundaryVia
+      - [19, 23]   # BoundaryPoint
+      - [23, 24]
+      - [24, 29]   # LowerLimit
+      - [29, 34]   # UpperLimit
+      - [34, 39]   # FIRType
+      - [39, 44]   # FIRControl
+      - [44, 47]   # TimeCode
+      - [47, 52]   # Frequency
+      - [52, 57]   # Sectorization
+      - [57, 62]   # BoundaryArcRadius
+      - [62, 67]   # BoundaryTheta
+      - [67, 72]   # BoundaryRho
+      - [98, 123]  # FIRNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - FIRIdentifier
+      - FIRClass
+      - BoundaryVia
+      - BoundaryPoint
+      - ICAOCode2
+      - LowerLimit
+      - UpperLimit
+      - FIRType
+      - FIRControl
+      - TimeCode
+      - Frequency
+      - Sectorization
+      - BoundaryArcRadius
+      - BoundaryTheta
+      - BoundaryRho
+      - FIRNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  UIR:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]     # SectionCode R
+      - [5, 6]     # SubsectionCode I
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # UIRIdentifier
+      - [17, 18]   # UIRClass
+      - [18, 19]   # BoundaryVia
+      - [19, 23]   # BoundaryPoint
+      - [23, 24]
+      - [24, 29]   # LowerLimit
+      - [29, 34]   # UpperLimit
+      - [34, 39]   # UIRType
+      - [39, 44]   # UIRControl
+      - [44, 47]   # TimeCode
+      - [47, 52]   # Frequency
+      - [52, 57]   # Sectorization
+      - [57, 62]   # BoundaryArcRadius
+      - [62, 67]   # BoundaryTheta
+      - [67, 72]   # BoundaryRho
+      - [98, 123]  # UIRNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - UIRIdentifier
+      - UIRClass
+      - BoundaryVia
+      - BoundaryPoint
+      - ICAOCode2
+      - LowerLimit
+      - UpperLimit
+      - UIRType
+      - UIRControl
+      - TimeCode
+      - Frequency
+      - Sectorization
+      - BoundaryArcRadius
+      - BoundaryTheta
+      - BoundaryRho
+      - UIRNameDescription
+      - FileRecordNo
+      - CycleDate
+
+metadata:
+  CONTROLLED_AIRSPACE:
+    description: "Controlled airspace boundary record"
+    record_length: 132
+    max_continuations: 3
+
+  FIR:
+    description: "Flight Information Region boundary record"
+    record_length: 132
+    max_continuations: 3
+
+  UIR:
+    description: "Upper Information Region boundary record"
+    record_length: 132
+    max_continuations: 3
+
+continuation_rules:
+  CONTROLLED_AIRSPACE:
+    - AirspaceNameDescription
+
+  FIR:
+    - FIRNameDescription
+
+  UIR:
+    - UIRNameDescription
+
+validation_rules:
+  CONTROLLED_AIRSPACE:
+    - field: AirspaceIdentifier
+      rule: non_empty
+    - field: BoundaryPoint
+      rule: non_empty
+
+  FIR:
+    - field: FIRIdentifier
+      rule: non_empty
+    - field: BoundaryPoint
+      rule: non_empty
+
+  UIR:
+    - field: UIRIdentifier
+      rule: non_empty
+    - field: BoundaryPoint
+      rule: non_empty

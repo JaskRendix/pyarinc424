@@ -1,0 +1,195 @@
+version: "ARINC 424-20"
+
+routing:
+  E:
+    A: ENROUTE_WAYPOINT
+    R: ENROUTE_AIRWAY
+    H: HOLDING_PATTERN
+    P: PATH_POINT
+  P:
+    A: AIRPORT
+    R: RUNWAY
+    G: GATE
+    C: SID
+    D: STAR
+    E: APPROACH
+    M: MISSED_APPROACH
+  D:
+    V: VOR
+    N: NDB
+    M: DME
+  L:
+    I: LOCALIZER
+    G: GLIDESLOPE
+
+schemas:
+  ENROUTE_WAYPOINT:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 18]
+      - [19, 21]
+      - [21, 22]
+      - [26, 29]
+      - [30, 31]
+      - [32, 41]
+      - [41, 51]
+      - [74, 79]
+      - [84, 87]
+      - [95, 98]
+      - [98, 123]
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - WaypointIdentifier
+      - ICAOCode2
+      - ContinuationRecordNo
+      - WaypointType
+      - WaypointUsage
+      - WaypointLatitude
+      - WaypointLongitude
+      - DynamicMagneticVariation
+      - DatumCode
+      - NameFormatIndicator
+      - WaypointNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  AIRPORT:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]
+      - [19, 22]
+      - [22, 26]
+      - [26, 29]
+      - [30, 32]
+      - [32, 41]
+      - [41, 51]
+      - [51, 55]
+      - [62, 65]
+      - [74, 79]
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirportIdentifier
+      - SpeedLimitAltitude
+      - LongestRunway
+      - AirportElevation
+      - TransitionAltitude
+      - AirportLatitude
+      - AirportLongitude
+      - MagneticVariation
+      - DataItemId
+      - DatumCode
+      - FileRecordNo
+      - CycleDate
+
+  NAVAID:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]
+      - [19, 22]
+      - [22, 25]
+      - [26, 29]
+      - [32, 41]
+      - [41, 51]
+      - [51, 55]
+      - [55, 62]
+      - [74, 79]
+      - [98, 123]
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - NavaidIdentifier
+      - ICAOCode2
+      - Frequency
+      - Channel
+      - NavaidLatitude
+      - NavaidLongitude
+      - DMEElevation
+      - DMEIdent
+      - DatumCode
+      - NavaidName
+      - FileRecordNo
+      - CycleDate
+
+metadata:
+  ENROUTE_WAYPOINT:
+    description: "Standard enroute waypoint record"
+    record_length: 132
+    max_continuations: 3
+
+  AIRPORT:
+    description: "Airport reference record"
+    record_length: 132
+    max_continuations: 2
+
+  NAVAID:
+    description: "VOR/NDB/DME navigation aid record"
+    record_length: 132
+    max_continuations: 3
+
+continuation_rules:
+  ENROUTE_WAYPOINT:
+    - WaypointNameDescription
+
+  NAVAID:
+    - NavaidName
+
+  AIRPORT:
+    - AirportIdentifier
+
+validation_rules:
+  ENROUTE_WAYPOINT:
+    - field: WaypointIdentifier
+      rule: non_empty
+    - field: WaypointLatitude
+      rule: valid_coordinate
+    - field: WaypointLongitude
+      rule: valid_coordinate
+
+  AIRPORT:
+    - field: AirportIdentifier
+      rule: non_empty
+
+  NAVAID:
+    - field: NavaidIdentifier
+      rule: non_empty

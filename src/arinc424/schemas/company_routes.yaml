@@ -1,0 +1,87 @@
+version: "ARINC 424-20 Company Routes"
+
+routing:
+  C:
+    R: COMPANY_ROUTE
+
+schemas:
+  COMPANY_ROUTE:
+    colspecs:
+      - [0, 1]     # RecordType
+      - [1, 4]     # CustomerAreaCode
+      - [4, 5]     # SectionCode (C)
+      - [5, 6]     # SubsectionCode (R)
+      - [6, 10]    # RegionCode
+      - [10, 12]   # ICAOCode
+      - [12, 13]   # Subsection
+      - [13, 21]   # CompanyRouteIdentifier
+      - [21, 25]   # OriginAirport
+      - [25, 29]   # DestinationAirport
+      - [29, 32]   # SequenceNumber
+      - [32, 37]   # FixIdentifier
+      - [37, 39]   # ICAOCode2
+      - [39, 41]   # PathTerminator
+      - [41, 46]   # Course
+      - [46, 51]   # Distance
+      - [51, 56]   # AltitudeDescription
+      - [56, 61]   # Altitude1
+      - [61, 66]   # Altitude2
+      - [66, 71]   # SpeedLimit
+      - [71, 76]   # SpeedLimitDescription
+      - [76, 81]   # TurnDirection
+      - [81, 86]   # Theta
+      - [86, 91]   # Rho
+      - [91, 96]   # ArcRadius
+      - [98, 123]  # CompanyRouteNameDescription
+      - [123, 128] # FileRecordNo
+      - [128, 132] # CycleDate
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - CompanyRouteIdentifier
+      - OriginAirport
+      - DestinationAirport
+      - SequenceNumber
+      - FixIdentifier
+      - ICAOCode2
+      - PathTerminator
+      - Course
+      - Distance
+      - AltitudeDescription
+      - Altitude1
+      - Altitude2
+      - SpeedLimit
+      - SpeedLimitDescription
+      - TurnDirection
+      - Theta
+      - Rho
+      - ArcRadius
+      - CompanyRouteNameDescription
+      - FileRecordNo
+      - CycleDate
+
+metadata:
+  COMPANY_ROUTE:
+    description: "Airline-specific stored company route"
+    record_length: 132
+    max_continuations: 5   # Company routes often have many legs
+
+continuation_rules:
+  COMPANY_ROUTE:
+    - CompanyRouteNameDescription
+
+validation_rules:
+  COMPANY_ROUTE:
+    - field: CompanyRouteIdentifier
+      rule: non_empty
+    - field: OriginAirport
+      rule: non_empty
+    - field: DestinationAirport
+      rule: non_empty
+    - field: FixIdentifier
+      rule: non_empty

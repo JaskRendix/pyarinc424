@@ -1,0 +1,205 @@
+version: "ARINC 424-20 Airway Restrictions"
+
+routing:
+  E:
+    C: CONDITIONAL_AIRWAY
+    D: DIRECTIONAL_AIRWAY
+    R: RNAV_RESTRICTED_AIRWAY
+
+schemas:
+  CONDITIONAL_AIRWAY:
+    colspecs:
+      - [0, 1]     # RecordType
+      - [1, 4]     # CustomerAreaCode
+      - [4, 5]     # SectionCode (E)
+      - [5, 6]     # SubsectionCode (C)
+      - [6, 10]    # RegionCode
+      - [10, 12]   # ICAOCode
+      - [12, 13]   # Subsection
+      - [13, 18]   # AirwayIdentifier
+      - [19, 21]   # ICAOCode2
+      - [21, 22]   # ContinuationRecordNo
+      - [26, 29]   # FromWaypoint
+      - [30, 33]   # ToWaypoint
+      - [33, 36]   # MinimumAltitude
+      - [36, 39]   # MaximumAltitude
+      - [41, 44]   # ConditionCode
+      - [44, 47]   # TimeCode
+      - [47, 52]   # ActivationSchedule
+      - [52, 57]   # SpeedLimit
+      - [57, 62]   # SpeedLimitDescription
+      - [62, 67]   # DirectionRestriction
+      - [67, 72]   # RNAVRequirement
+      - [98, 123]  # RestrictionDescription
+      - [123, 128] # FileRecordNo
+      - [128, 132] # CycleDate
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirwayIdentifier
+      - ICAOCode2
+      - ContinuationRecordNo
+      - FromWaypoint
+      - ToWaypoint
+      - MinimumAltitude
+      - MaximumAltitude
+      - ConditionCode
+      - TimeCode
+      - ActivationSchedule
+      - SpeedLimit
+      - SpeedLimitDescription
+      - DirectionRestriction
+      - RNAVRequirement
+      - RestrictionDescription
+      - FileRecordNo
+      - CycleDate
+
+  DIRECTIONAL_AIRWAY:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 18]   # AirwayIdentifier
+      - [19, 21]
+      - [21, 22]
+      - [26, 29]   # FromWaypoint
+      - [30, 33]   # ToWaypoint
+      - [33, 36]   # MinimumAltitude
+      - [36, 39]   # MaximumAltitude
+      - [41, 44]   # DirectionRestriction
+      - [44, 47]   # TimeCode
+      - [47, 52]   # ActivationSchedule
+      - [52, 57]   # SpeedLimit
+      - [57, 62]   # SpeedLimitDescription
+      - [62, 67]   # RNAVRequirement
+      - [98, 123]  # DirectionalDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirwayIdentifier
+      - ICAOCode2
+      - ContinuationRecordNo
+      - FromWaypoint
+      - ToWaypoint
+      - MinimumAltitude
+      - MaximumAltitude
+      - DirectionRestriction
+      - TimeCode
+      - ActivationSchedule
+      - SpeedLimit
+      - SpeedLimitDescription
+      - RNAVRequirement
+      - DirectionalDescription
+      - FileRecordNo
+      - CycleDate
+
+  RNAV_RESTRICTED_AIRWAY:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 18]   # AirwayIdentifier
+      - [19, 21]
+      - [21, 22]
+      - [26, 29]   # FromWaypoint
+      - [30, 33]   # ToWaypoint
+      - [33, 36]   # MinimumAltitude
+      - [36, 39]   # MaximumAltitude
+      - [41, 44]   # RNAVRequirement
+      - [44, 47]   # PerformanceCode
+      - [47, 52]   # SpeedLimit
+      - [57, 62]   # SpeedLimitDescription
+      - [62, 67]   # DirectionRestriction
+      - [67, 72]   # ConditionCode
+      - [98, 123]  # RNAVRestrictionDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirwayIdentifier
+      - ICAOCode2
+      - ContinuationRecordNo
+      - FromWaypoint
+      - ToWaypoint
+      - MinimumAltitude
+      - MaximumAltitude
+      - RNAVRequirement
+      - PerformanceCode
+      - SpeedLimit
+      - SpeedLimitDescription
+      - DirectionRestriction
+      - ConditionCode
+      - RNAVRestrictionDescription
+      - FileRecordNo
+      - CycleDate
+
+metadata:
+  CONDITIONAL_AIRWAY:
+    description: "Conditional airway segment with time or usage restrictions"
+    record_length: 132
+    max_continuations: 3
+
+  DIRECTIONAL_AIRWAY:
+    description: "Airway segment with directional restrictions"
+    record_length: 132
+    max_continuations: 3
+
+  RNAV_RESTRICTED_AIRWAY:
+    description: "Airway segment requiring specific RNAV performance"
+    record_length: 132
+    max_continuations: 3
+
+continuation_rules:
+  CONDITIONAL_AIRWAY:
+    - RestrictionDescription
+
+  DIRECTIONAL_AIRWAY:
+    - DirectionalDescription
+
+  RNAV_RESTRICTED_AIRWAY:
+    - RNAVRestrictionDescription
+
+validation_rules:
+  CONDITIONAL_AIRWAY:
+    - field: AirwayIdentifier
+      rule: non_empty
+    - field: FromWaypoint
+      rule: non_empty
+    - field: ToWaypoint
+      rule: non_empty
+
+  DIRECTIONAL_AIRWAY:
+    - field: AirwayIdentifier
+      rule: non_empty
+
+  RNAV_RESTRICTED_AIRWAY:
+    - field: AirwayIdentifier
+      rule: non_empty
+    - field: RNAVRequirement
+      rule: non_empty

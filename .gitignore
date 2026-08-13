@@ -1,0 +1,24 @@
+# Bytecode
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Coverage / pytest
+.coverage
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+.DS_Store

@@ -1,0 +1,335 @@
+version: "ARINC 424-20 Extended Communications"
+
+routing:
+  C:
+    U: UNICOM
+    F: CTAF
+    S: FLIGHT_SERVICE_STATION
+    V: VOLMET
+    H: HF_LONG_RANGE
+    E: EMERGENCY_COMMUNICATION
+
+schemas:
+  UNICOM:
+    colspecs:
+      - [0, 1]     # RecordType
+      - [1, 4]     # CustomerAreaCode
+      - [4, 5]     # SectionCode (C)
+      - [5, 6]     # SubsectionCode (U)
+      - [6, 10]    # RegionCode
+      - [10, 12]   # ICAOCode
+      - [12, 13]   # Subsection
+      - [13, 17]   # AirportIdentifier
+      - [17, 20]   # ServiceType
+      - [20, 23]   # Frequency
+      - [23, 26]   # GuardFrequency
+      - [26, 29]   # TimeCode
+      - [29, 32]   # Sectorization
+      - [32, 41]   # Latitude
+      - [41, 51]   # Longitude
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # UNICOMNameDescription
+      - [123, 128] # FileRecordNo
+      - [128, 132] # CycleDate
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirportIdentifier
+      - ServiceType
+      - Frequency
+      - GuardFrequency
+      - TimeCode
+      - Sectorization
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - UNICOMNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  CTAF:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # AirportIdentifier
+      - [17, 20]   # ServiceType
+      - [20, 23]   # Frequency
+      - [23, 26]   # GuardFrequency
+      - [26, 29]   # TimeCode
+      - [29, 32]   # Sectorization
+      - [32, 41]   # Latitude
+      - [41, 51]   # Longitude
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # CTAFNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - AirportIdentifier
+      - ServiceType
+      - Frequency
+      - GuardFrequency
+      - TimeCode
+      - Sectorization
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - CTAFNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  FLIGHT_SERVICE_STATION:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # StationIdentifier
+      - [17, 20]   # ServiceType
+      - [20, 23]   # Frequency
+      - [23, 26]   # GuardFrequency
+      - [26, 29]   # TimeCode
+      - [29, 32]   # Sectorization
+      - [32, 41]   # Latitude
+      - [41, 51]   # Longitude
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # FSSNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - StationIdentifier
+      - ServiceType
+      - Frequency
+      - GuardFrequency
+      - TimeCode
+      - Sectorization
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - FSSNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  VOLMET:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # VOLMETIdentifier
+      - [17, 20]   # BroadcastType
+      - [20, 23]   # Frequency
+      - [23, 26]   # GuardFrequency
+      - [26, 29]   # TimeCode
+      - [29, 32]   # Sectorization
+      - [32, 41]   # Latitude
+      - [41, 51]   # Longitude
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # VOLMETNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - VOLMETIdentifier
+      - BroadcastType
+      - Frequency
+      - GuardFrequency
+      - TimeCode
+      - Sectorization
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - VOLMETNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  HF_LONG_RANGE:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # HFStationIdentifier
+      - [17, 20]   # ServiceType
+      - [20, 25]   # HFPrimaryFrequency
+      - [25, 30]   # HFSecondaryFrequency
+      - [30, 33]   # TimeCode
+      - [33, 38]   # ActivationSchedule
+      - [38, 43]   # Sectorization
+      - [43, 52]   # Latitude
+      - [52, 62]   # Longitude
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # HFNameDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - HFStationIdentifier
+      - ServiceType
+      - HFPrimaryFrequency
+      - HFSecondaryFrequency
+      - TimeCode
+      - ActivationSchedule
+      - Sectorization
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - HFNameDescription
+      - FileRecordNo
+      - CycleDate
+
+  EMERGENCY_COMMUNICATION:
+    colspecs:
+      - [0, 1]
+      - [1, 4]
+      - [4, 5]
+      - [5, 6]
+      - [6, 10]
+      - [10, 12]
+      - [12, 13]
+      - [13, 17]   # EmergencyServiceIdentifier
+      - [17, 20]   # ServiceType
+      - [20, 23]   # EmergencyFrequency
+      - [23, 26]   # GuardFrequency
+      - [26, 29]   # TimeCode
+      - [29, 32]   # Sectorization
+      - [32, 41]   # Latitude
+      - [41, 51]   # Longitude
+      - [74, 79]   # MagneticVariation
+      - [98, 123]  # EmergencyServiceDescription
+      - [123, 128]
+      - [128, 132]
+    names:
+      - RecordType
+      - CustomerAreaCode
+      - SectionCode
+      - SubsectionCode
+      - RegionCode
+      - ICAOCode
+      - Subsection
+      - EmergencyServiceIdentifier
+      - ServiceType
+      - EmergencyFrequency
+      - GuardFrequency
+      - TimeCode
+      - Sectorization
+      - Latitude
+      - Longitude
+      - MagneticVariation
+      - EmergencyServiceDescription
+      - FileRecordNo
+      - CycleDate
+
+metadata:
+  UNICOM:
+    description: "UNICOM advisory frequency"
+    record_length: 132
+    max_continuations: 2
+
+  CTAF:
+    description: "Common Traffic Advisory Frequency"
+    record_length: 132
+    max_continuations: 2
+
+  FLIGHT_SERVICE_STATION:
+    description: "Flight Service Station communication record"
+    record_length: 132
+    max_continuations: 2
+
+  VOLMET:
+    description: "Meteorological broadcast service"
+    record_length: 132
+    max_continuations: 2
+
+  HF_LONG_RANGE:
+    description: "HF long-range communication service"
+    record_length: 132
+    max_continuations: 2
+
+  EMERGENCY_COMMUNICATION:
+    description: "Emergency communication frequency"
+    record_length: 132
+    max_continuations: 2
+
+continuation_rules:
+  UNICOM:
+    - UNICOMNameDescription
+  CTAF:
+    - CTAFNameDescription
+  FLIGHT_SERVICE_STATION:
+    - FSSNameDescription
+  VOLMET:
+    - VOLMETNameDescription
+  HF_LONG_RANGE:
+    - HFNameDescription
+  EMERGENCY_COMMUNICATION:
+    - EmergencyServiceDescription
+
+validation_rules:
+  UNICOM:
+    - field: Frequency
+      rule: non_empty
+
+  CTAF:
+    - field: Frequency
+      rule: non_empty
+
+  FLIGHT_SERVICE_STATION:
+    - field: Frequency
+      rule: non_empty
+
+  VOLMET:
+    - field: Frequency
+      rule: non_empty
+
+  HF_LONG_RANGE:
+    - field: HFPrimaryFrequency
+      rule: non_empty
+
+  EMERGENCY_COMMUNICATION:
+    - field: EmergencyFrequency
+      rule: non_empty
