@@ -44,5 +44,8 @@ arinc424 = "arinc424.cli:cli"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+arinc424 = ["schemas/*.yaml"]
+
 [tool.pytest.ini_options]
 addopts = "--cov=arinc424 --cov-report=term-missing"
