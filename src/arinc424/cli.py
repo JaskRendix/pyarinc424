@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 from collections.abc import Callable, Iterable
 from dataclasses import asdict
@@ -7,6 +9,7 @@ from pathlib import Path
 import click
 import pandas as pd
 
+from .gis import dataframe_to_geojson, save_geojson
 from .parser import parse_arinc_file, parse_header_details
 from .schemas.loader import load_all_icd_schemas
 from .utils import apply_decoders
@@ -66,7 +69,7 @@ def cli():
     "--format",
     "-F",
     "out_format",
-    type=click.Choice(["json", "csv", "parquet"], case_sensitive=False),
+    type=click.Choice(["json", "csv", "parquet", "geojson"], case_sensitive=False),
     default="json",
     help="Output file format (default: json).",
 )
@@ -119,6 +122,16 @@ def parse(
             )
 
     out_format = out_format.lower()
+
+    # Handle GeoJSON Export
+    if out_format == "geojson":
+        geojson_data = dataframe_to_geojson(df, schema_name=schema_name)
+        if output:
+            save_geojson(geojson_data, output)
+            click.echo(f"Saved GeoJSON results to {output}", err=True)
+        else:
+            click.echo(json.dumps(geojson_data, indent=2, default=_json_default))
+        return
 
     if model:
         converter = _resolve_converter(schema_name)

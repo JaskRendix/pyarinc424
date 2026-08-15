@@ -33,6 +33,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+gis = [
+    "geopandas",
+    "shapely",
+]
 test = [
     "pytest",
     "pytest-cov",
