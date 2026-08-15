@@ -1,9 +1,17 @@
+from __future__ import annotations
+
 import math
 
 import pandas as pd
 import pytest
 
-from arinc424.utils import apply_decoders, decode_arinc_coordinate, decode_magvar
+from arinc424.utils import (
+    apply_decoders,
+    decode_arinc_coordinate,
+    decode_elevation,
+    decode_frequency,
+    decode_magvar,
+)
 
 
 @pytest.mark.parametrize(
@@ -44,10 +52,12 @@ def test_decode_arinc_coordinate_invalid(coord):
 @pytest.mark.parametrize(
     "magvar,expected",
     [
-        ("E0050", 0 + 50 / 60),  # East positive
-        ("W0012", -(0 + 12 / 60)),  # West negative
-        ("E1234", 12 + 34 / 60),
-        ("W1234", -(12 + 34 / 60)),
+        ("E0050", 5.0),  # 5-char tenths: E + 000 + 5 -> 5.0° East
+        ("W0012", -1.2),  # 5-char tenths: W + 000 + 2 -> -1.2° West
+        ("E1234", 123.4),  # 5-char tenths: E + 123 + 4 -> 123.4° East
+        ("W1234", -123.4),  # 5-char tenths: W + 123 + 4 -> -123.4° West
+        ("E12300", 12.5),  # 6-char legacy minutes: E + 12 + 30 -> 12° 30' = 12.5°
+        ("T0000", 0.0),  # True North
     ],
 )
 def test_decode_magvar_valid(magvar, expected):
@@ -71,12 +81,53 @@ def test_decode_magvar_invalid(magvar):
     assert decode_magvar(magvar) is None
 
 
+@pytest.mark.parametrize(
+    "freq,expected",
+    [
+        ("118100", 118.1),  # Encoded kHz
+        ("118.1", 118.1),
+        ("33500", 33.5),  # Encoded kHz (> 10000 -> 33500 / 1000 = 33.5 MHz)
+        (None, None),
+        ("", None),
+        ("INVALID", None),
+    ],
+)
+def test_decode_frequency(freq, expected):
+    result = decode_frequency(freq)
+    if expected is None:
+        assert result is None
+    else:
+        assert math.isclose(result, expected, rel_tol=1e-9)
+
+
+@pytest.mark.parametrize(
+    "elev,expected",
+    [
+        ("1250", 1250.0),
+        ("+1250", 1250.0),
+        ("-150", -150.0),
+        ("B50", -50.0),  # Below sea level prefix
+        (None, None),
+        ("", None),
+        ("XYZ", None),
+    ],
+)
+def test_decode_elevation(elev, expected):
+    result = decode_elevation(elev)
+    if expected is None:
+        assert result is None
+    else:
+        assert math.isclose(result, expected, rel_tol=1e-9)
+
+
 def test_apply_decoders_coordinates_and_magvar():
     df = pd.DataFrame(
         {
             "Latitude": ["N48073012", "S48073012"],
             "Longitude": ["E12345012", "W12345012"],
             "MagneticVariation": ["E0050", "W0012"],
+            "CommsFrequency": ["118100", "121500"],
+            "StationElevation": ["+1500", "-200"],
         }
     )
 
@@ -85,6 +136,8 @@ def test_apply_decoders_coordinates_and_magvar():
     assert "Latitude_decimal" in out.columns
     assert "Longitude_decimal" in out.columns
     assert "MagneticVariation_decimal" in out.columns
+    assert "CommsFrequency_decoded" in out.columns
+    assert "StationElevation_decoded" in out.columns
 
     assert math.isclose(
         out.loc[0, "Latitude_decimal"], round(48 + 7 / 60 + 30.12 / 3600, 6)
@@ -100,8 +153,11 @@ def test_apply_decoders_coordinates_and_magvar():
         out.loc[1, "Longitude_decimal"], round(-(123 + 45 / 60 + 1.2 / 3600), 6)
     )
 
-    assert math.isclose(out.loc[0, "MagneticVariation_decimal"], 50 / 60)
-    assert math.isclose(out.loc[1, "MagneticVariation_decimal"], -(12 / 60))
+    assert math.isclose(out.loc[0, "MagneticVariation_decimal"], 5.0)
+    assert math.isclose(out.loc[1, "MagneticVariation_decimal"], -1.2)
+    assert math.isclose(out.loc[0, "CommsFrequency_decoded"], 118.1)
+    assert math.isclose(out.loc[0, "StationElevation_decoded"], 1500.0)
+    assert math.isclose(out.loc[1, "StationElevation_decoded"], -200.0)
 
 
 def test_apply_decoders_ignores_unrelated_columns():
