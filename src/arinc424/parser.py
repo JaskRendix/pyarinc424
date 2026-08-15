@@ -39,7 +39,7 @@ def parse_arinc_file(
     schema_name, schema = _resolve_schema(record_filter)
 
     target_section = record_filter[0]
-    target_subsection = record_filter[1]
+    target_subsection = record_filter[1] if len(record_filter) > 1 else None
 
     lines: list[str] = []
     with open(path, "r", encoding="utf-8", errors="ignore") as f:
@@ -48,7 +48,9 @@ def parse_arinc_file(
             if len(normalized) >= 5:
                 sec = normalized[3:4]
                 subsec = normalized[4:5]
-                if sec == target_section and subsec == target_subsection:
+                sec_match = sec == target_section
+                subsec_match = target_subsection is None or subsec == target_subsection
+                if sec_match and subsec_match:
                     lines.append(normalized + "\n")
 
     if not lines:
@@ -85,38 +87,48 @@ def parse_arinc_file(
     if df_cont.empty or "FileRecordNo" not in df_base.columns:
         return schema_name, df_base
 
-    merged = df_base.copy()
+    # Efficient O(N) vectorized continuation aggregation using pandas groupby
+    existing_cont_fields = [f for f in cont_fields if f in df_cont.columns]
 
-    for _, row in df_cont.iterrows():
-        file_no = row.get("FileRecordNo")
-        if not file_no:
-            continue
+    if not existing_cont_fields:
+        return schema_name, df_base
 
-        base_idx = merged.index[merged["FileRecordNo"] == file_no]
-        if base_idx.empty:
-            continue
+    cont_grouped = (
+        df_cont.groupby("FileRecordNo")[existing_cont_fields]
+        .agg(lambda cols: " ".join(v for v in cols if v.strip()))
+        .reset_index()
+    )
 
-        for field in cont_fields:
-            if field not in merged.columns or field not in row.index:
-                continue
+    merged = df_base.merge(
+        cont_grouped, on="FileRecordNo", how="left", suffixes=("", "_cont")
+    )
 
-            val = str(row.get(field, "")).strip()
-            if not val:
-                continue
-
-            curr = str(merged.loc[base_idx, field].values[0]).strip()
-            if curr:
-                merged.loc[base_idx, field] = (curr + " " + val).strip()
-            else:
-                merged.loc[base_idx, field] = val
+    for field in existing_cont_fields:
+        cont_col = f"{field}_cont"
+        if cont_col in merged.columns:
+            base_val = merged[field].fillna("").astype(str).str.strip()
+            val_cont = merged[cont_col].fillna("").astype(str).str.strip()
+            merged[field] = (base_val + " " + val_cont).str.strip()
+            merged.drop(columns=[cont_col], inplace=True)
 
     return schema_name, merged
 
 
-def stream_arinc_file(file_path: str | Path, record_filter: str):
+def stream_arinc_file(
+    file_path: str | Path,
+    record_filter: str,
+    as_dict: bool = False,
+    batch_size: int | None = None,
+):
     path = Path(file_path)
+    if not path.exists():
+        raise FileNotFoundError(f"File not found: {path}")
+
+    schema_name, schema = _resolve_schema(record_filter) if as_dict else (None, None)
     target_section = record_filter[0]
-    target_subsection = record_filter[1]
+    target_subsection = record_filter[1] if len(record_filter) > 1 else None
+
+    batch: list[dict | str] = []
 
     with open(path, "r", encoding="utf-8", errors="ignore") as f:
         with mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) as mm:
@@ -127,13 +139,40 @@ def stream_arinc_file(file_path: str | Path, record_filter: str):
                 if len(line_str) >= 5:
                     sec = line_str[3:4]
                     subsec = line_str[4:5]
-                    if sec == target_section and subsec == target_subsection:
-                        yield line_str
+                    sec_match = sec == target_section
+                    subsec_match = (
+                        target_subsection is None or subsec == target_subsection
+                    )
+                    if sec_match and subsec_match:
+                        if as_dict and schema:
+                            record = {}
+                            for name, (start, end) in zip(
+                                schema["names"], schema["colspecs"]
+                            ):
+                                record[name] = line_str[start:end].strip()
+                            item = record
+                        else:
+                            item = line_str
+
+                        if batch_size:
+                            batch.append(item)
+                            if len(batch) >= batch_size:
+                                yield batch
+                                batch = []
+                        else:
+
+                            yield item
+
+    if batch_size and batch:
+        yield batch
 
 
-def parse_header_details(file_path: str | Path) -> dict:
-    header_info: dict[str, str | None] = {}
+def parse_header_details(file_path: str | Path) -> dict[str, str | None]:
     path = Path(file_path)
+    if not path.exists():
+        raise FileNotFoundError(f"File not found: {path}")
+
+    header_info: dict[str, str | None] = {}
 
     with open(path, "r", encoding="utf-8", errors="ignore") as f:
         for line in f:
@@ -162,24 +201,8 @@ def parse_header_details(file_path: str | Path) -> dict:
 
 
 def read_header(file: str | Path) -> dict[str, str | None]:
-    path = Path(file)
-    if not path.exists():
-        raise FileNotFoundError(f"File not found: {path}")
-
-    header_info: dict[str, str | None] = {}
-    with open(path, "r", encoding="utf-8", errors="ignore") as f:
-        for line in f:
-            line_str = line.replace("\xa0", " ").strip()
-            if line_str.startswith("HDR") or "HDR" in line_str[:5]:
-                header_info["raw_header"] = line_str
-                header_info["cycle_date"] = (
-                    line_str[11:15] if len(line_str) >= 15 else None
-                )
-                header_info["effective_date"] = (
-                    line_str[-4:] if len(line_str) >= 4 else None
-                )
-                break
-    return header_info
+    """Extract metadata and cycle info from file headers."""
+    return parse_header_details(file)
 
 
 def read_waypoints(file: str | Path) -> pd.DataFrame:

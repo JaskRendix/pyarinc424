@@ -280,3 +280,31 @@ def test_read_avionics(tmp_path: Path):
     df = parser.read_avionics(p)
     assert len(df) == 1
     assert df.iloc[0]["Name"] == "AVIONICS"
+
+
+def test_stream_arinc_file_with_batch_size(tmp_path: Path):
+    p = tmp_path / "test_stream_batch.arinc"
+    p.write_text(
+        "XXXEAFOO\n" "YYYEA bar\n" "ZZZEA baz\n",
+        encoding="utf-8",
+    )
+    batches = list(parser.stream_arinc_file(p, record_filter="EA", batch_size=2))
+    assert len(batches) == 2
+    assert len(batches[0]) == 2
+    assert len(batches[1]) == 1
+
+
+def test_stream_arinc_file_as_dict(tmp_path: Path):
+    p = tmp_path / "test_stream_dict.arinc"
+    line = build_line("REC", "E", "A", "00001", "", "WP_DICT")
+    p.write_text(line + "\n", encoding="utf-8")
+    records = list(parser.stream_arinc_file(p, record_filter="EA", as_dict=True))
+    assert len(records) == 1
+    assert records[0]["Name"] == "WP_DICT"
+
+
+def test_parse_arinc_file_short_filter_error(tmp_path: Path):
+    p = tmp_path / "dummy.arinc"
+    p.write_text("some data\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        parser.parse_arinc_file(p, record_filter="E")
