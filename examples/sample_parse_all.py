@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from arinc424 import pyarinc424 as a
+from arinc424 import parser
 
 
 def main():
@@ -11,7 +11,7 @@ def main():
         return
 
     print("Parsing entire ARINC 424 file in a single pass...")
-    datasets = a.parse_all(sample_file, merge_continuations=True)
+    datasets = parser.parse_all(sample_file, merge_continuations=True)
 
     print(f"\nSuccessfully decoded {len(datasets)} dataset categories:\n")
 
