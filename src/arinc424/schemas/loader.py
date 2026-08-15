@@ -30,49 +30,100 @@ Converter = Callable[[pd.DataFrame], Iterable[object]]
 
 @dataclass
 class SchemaRegistry:
+    """Unified registry holding ARINC 424 schemas, routing rules, and model converters."""
+
     schemas: dict[str, dict] = field(default_factory=dict)
     routing: dict[str, dict[str, str]] = field(default_factory=dict)
     continuation_rules: dict[str, list[str]] = field(default_factory=dict)
     model_converters: dict[str, Converter] = field(default_factory=dict)
+
+    def resolve_route(self, section: str, subsection: str) -> str | None:
+        """Resolve section/subsection codes to a schema name."""
+        return self.routing.get(section, {}).get(subsection)
+
+    def get_schema(self, schema_name: str) -> dict | None:
+        """Retrieve schema dictionary by schema name."""
+        return self.schemas.get(schema_name)
+
+    def get_continuation_fields(self, schema_name: str) -> list[str]:
+        """Retrieve list of field names that support continuation records."""
+        return self.continuation_rules.get(schema_name, [])
+
+    def get_converter(self, schema_name: str) -> Converter | None:
+        """Retrieve typed model converter function for a schema."""
+        return self.model_converters.get(schema_name)
 
 
 def _schemas_dir() -> Path:
     return Path(__file__).parent
 
 
+def _validate_schema_definition(name: str, data: dict, path: Path) -> None:
+    """Pre-validate YAML schema structure to prevent runtime parsing errors."""
+    if "colspecs" in data and "names" in data:
+        colspecs = data["colspecs"]
+        names = data["names"]
+        if len(colspecs) != len(names):
+            raise ValueError(
+                f"Schema '{name}' in {path.name} has mismatched 'colspecs' ({len(colspecs)}) "
+                f"and 'names' ({len(names)}) counts."
+            )
+
+
 def _load_yaml_schemas() -> dict[str, dict]:
     schemas: dict[str, dict] = {}
-    for path in _schemas_dir().glob("*.yaml"):
-        with open(path, "r", encoding="utf-8") as f:
-            data = yaml.safe_load(f) or {}
+    schemas_path = _schemas_dir()
+
+    for path in schemas_path.glob("*.yaml"):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = yaml.safe_load(f) or {}
+        except yaml.YAMLError as exc:
+            raise ValueError(f"Failed to parse YAML schema file {path}: {exc}") from exc
+
         name = data.get("name") or path.stem
         if name in schemas:
             raise ValueError(
                 f"Duplicate schema name '{name}' found in {path} (already loaded)"
             )
+
+        _validate_schema_definition(name, data, path)
         schemas[name] = data
+
+    logger.debug("Loaded %d YAML schemas from %s", len(schemas), schemas_path)
     return schemas
 
 
 def _load_routing_table() -> dict[str, dict[str, str]]:
     routing_path = _schemas_dir() / "routing.json"
     if routing_path.exists():
-        with open(routing_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+        try:
+            with open(routing_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except json.JSONDecodeError as exc:
+            logger.error("Failed to parse routing table at %s: %s", routing_path, exc)
+            raise
+    logger.warning(
+        "Routing file not found at %s. Using empty routing table.", routing_path
+    )
     return {}
 
 
 def _load_continuation_rules() -> dict[str, list[str]]:
     cont_path = _schemas_dir() / "continuations.json"
     if cont_path.exists():
-        with open(cont_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+        try:
+            with open(cont_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except json.JSONDecodeError as exc:
+            logger.error("Failed to parse continuations file at %s: %s", cont_path, exc)
+            raise
+    logger.warning("Continuations file not found at %s. Using empty rules.", cont_path)
     return {}
 
 
 def _build_model_converters() -> dict[str, Converter]:
     return {
-        # schema_name -> converter
         "Waypoints": df_to_waypoints,
         "Airports": df_to_airport_infrastructure,
         "Airspaces": df_to_airspaces,
@@ -91,9 +142,16 @@ def _build_model_converters() -> dict[str, Converter]:
 
 @lru_cache(maxsize=1)
 def load_all_icd_schemas() -> SchemaRegistry:
+    """Load and cache all YAML schemas, routing rules, continuation rules, and converters."""
     registry = SchemaRegistry()
     registry.schemas = _load_yaml_schemas()
     registry.routing = _load_routing_table()
     registry.continuation_rules = _load_continuation_rules()
     registry.model_converters = _build_model_converters()
     return registry
+
+
+def reload_icd_schemas() -> SchemaRegistry:
+    """Clear schema cache and reload all definitions from disk."""
+    load_all_icd_schemas.cache_clear()
+    return load_all_icd_schemas()

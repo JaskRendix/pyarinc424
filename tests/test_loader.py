@@ -1,6 +1,7 @@
+import json
+
 import pandas as pd
 import pytest
-import yaml
 
 from arinc424.schemas.loader import (
     SchemaRegistry,
@@ -117,7 +118,7 @@ def test_malformed_yaml(tmp_path, monkeypatch):
     d = tmp_path
     monkeypatch.setattr("arinc424.schemas.loader._schemas_dir", lambda: d)
     (d / "bad.yaml").write_text("::: not yaml :::")
-    with pytest.raises(yaml.scanner.ScannerError):
+    with pytest.raises(ValueError, match="Failed to parse YAML schema file"):
         _load_yaml_schemas()
 
 
@@ -175,3 +176,30 @@ def test_yaml_schema_default_name(tmp_path, monkeypatch):
     (d / "A.yaml").write_text("{}")
     schemas = _load_yaml_schemas()
     assert "A" in schemas
+
+
+def test_schema_definition_mismatch(tmp_path, monkeypatch):
+    d = tmp_path
+    monkeypatch.setattr("arinc424.schemas.loader._schemas_dir", lambda: d)
+    # colspecs and names length mismatch
+    (d / "mismatch.yaml").write_text(
+        "name: Mismatch\ncolspecs: [[0, 5]]\nnames: ['a', 'b']\n"
+    )
+    with pytest.raises(ValueError, match="mismatched 'colspecs'"):
+        _load_yaml_schemas()
+
+
+def test_malformed_routing_json(tmp_path, monkeypatch):
+    d = tmp_path
+    monkeypatch.setattr("arinc424.schemas.loader._schemas_dir", lambda: d)
+    (d / "routing.json").write_text("{ invalid json }")
+    with pytest.raises(json.JSONDecodeError):
+        _load_routing_table()
+
+
+def test_malformed_continuations_json(tmp_path, monkeypatch):
+    d = tmp_path
+    monkeypatch.setattr("arinc424.schemas.loader._schemas_dir", lambda: d)
+    (d / "continuations.json").write_text("{ invalid json }")
+    with pytest.raises(json.JSONDecodeError):
+        _load_continuation_rules()
