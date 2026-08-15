@@ -7,10 +7,14 @@ import pytest
 
 from arinc424.utils import (
     apply_decoders,
+    decode_altitude_descriptor,
     decode_arinc_coordinate,
     decode_elevation,
     decode_frequency,
     decode_magvar,
+    decode_path_terminator,
+    decode_procedure_leg_row,
+    decode_turn_direction,
 )
 
 
@@ -200,3 +204,121 @@ def test_apply_decoders_handles_nan_values():
     assert pd.isna(out.loc[0, "Longitude_decimal"])
     assert out.loc[1, "Longitude_decimal"] is not None
     assert out.loc[2, "Longitude_decimal"] is not None
+
+
+@pytest.mark.parametrize(
+    "code,expected",
+    [
+        ("AF", "DME Arc to Fix"),
+        ("cf", "Course to Fix"),  # lowercase
+        (" RF ", "Radius to Fix (Arc)"),  # whitespace
+        ("XX", "Unknown (XX)"),
+        ("", "Unknown ()"),
+        (None, "Unknown (None)"),
+    ],
+)
+def test_decode_path_terminator(code, expected):
+    assert decode_path_terminator(code) == expected
+
+
+@pytest.mark.parametrize(
+    "code,expected",
+    [
+        ("L", "Left"),
+        ("R", "Right"),
+        (" l ", "Left"),
+        (" r ", "Right"),
+        ("", "None/Straight"),
+        ("X", "None/Straight"),
+        (None, "None/Straight"),
+    ],
+)
+def test_decode_turn_direction(code, expected):
+    assert decode_turn_direction(code) == expected
+
+
+@pytest.mark.parametrize(
+    "desc,alt1,alt2,expected",
+    [
+        (
+            "@",
+            "5000",
+            "",
+            {"descriptor": "At", "altitude_1": "5000", "altitude_2": None},
+        ),
+        (
+            "+",
+            "3000",
+            "",
+            {"descriptor": "At or Above", "altitude_1": "3000", "altitude_2": None},
+        ),
+        (
+            "-",
+            "7000",
+            "",
+            {"descriptor": "At or Below", "altitude_1": "7000", "altitude_2": None},
+        ),
+        (
+            "B",
+            "3000",
+            "5000",
+            {"descriptor": "Between", "altitude_1": "3000", "altitude_2": "5000"},
+        ),
+        (
+            "X",
+            "2000",
+            "3000",
+            {"descriptor": "X", "altitude_1": "2000", "altitude_2": None},
+        ),
+        (
+            "",
+            "1000",
+            "2000",
+            {"descriptor": "", "altitude_1": "1000", "altitude_2": None},
+        ),
+    ],
+)
+def test_decode_altitude_descriptor(desc, alt1, alt2, expected):
+    assert decode_altitude_descriptor(desc, alt1, alt2) == expected
+
+
+def test_decode_procedure_leg_row_basic():
+    row = pd.Series(
+        {
+            "PathTerminator": "CF",
+            "TurnDirection": "L",
+            "RecommendedNavaid": "ABC",  # currently unused
+        }
+    )
+
+    decoded = decode_procedure_leg_row(row)
+
+    assert decoded["PathTerminatorDescription"] == "Course to Fix"
+    assert decoded["TurnDirectionFull"] == "Left"
+
+
+def test_decode_procedure_leg_row_missing_fields():
+    row = pd.Series({})
+
+    decoded = decode_procedure_leg_row(row)
+
+    assert decoded["PathTerminatorDescription"] == "Unknown ()"
+    assert decoded["TurnDirectionFull"] == "None/Straight"
+
+
+def test_decode_procedure_leg_row_normalization():
+    row = pd.Series(
+        {
+            "PathTerminator": " af ",
+            "TurnDirection": " r ",
+        }
+    )
+
+    decoded = decode_procedure_leg_row(row)
+
+    assert decoded["PathTerminatorDescription"] == "DME Arc to Fix"
+    assert decoded["TurnDirectionFull"] == "Right"
+
+
+def test_decode_path_terminator_unknown_formatting():
+    assert decode_path_terminator("??") == "Unknown (??)"

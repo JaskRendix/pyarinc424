@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 import pandas as pd
 
 
@@ -128,7 +130,7 @@ def decode_elevation(s: str) -> float | None:
 
 
 def apply_decoders(df: pd.DataFrame) -> pd.DataFrame:
-    """Apply coordinate, magnetic variation, frequency, and elevation decoders across matching DataFrame columns."""
+    """Apply coordinate, magnetic variation, frequency, elevation, and procedure decoders across matching DataFrame columns."""
     out = df.copy()
 
     for col in df.columns:
@@ -160,4 +162,103 @@ def apply_decoders(df: pd.DataFrame) -> pd.DataFrame:
             )
             out[f"{col}_decoded"] = pd.to_numeric(decoded, errors="coerce")
 
+    if "PathTerminator" in out.columns:
+        out["PathTerminatorDescription"] = out["PathTerminator"].apply(
+            decode_path_terminator
+        )
+
+    if "TurnDirection" in out.columns:
+        out["TurnDirectionFull"] = out["TurnDirection"].apply(decode_turn_direction)
+
+    if all(
+        col in out.columns for col in ["AltitudeDescription", "Altitude1", "Altitude2"]
+    ):
+        decoded_alts = []
+        for _, row in out.iterrows():
+            desc = str(row.get("AltitudeDescription", ""))
+            alt1 = str(row.get("Altitude1", ""))
+            alt2 = str(row.get("Altitude2", ""))
+            decoded_alts.append(decode_altitude_descriptor(desc, alt1, alt2))
+
+        alts_df = pd.DataFrame(decoded_alts)
+        out["AltitudeDescriptorFull"] = alts_df["descriptor"]
+        out["Altitude1Decoded"] = alts_df["altitude_1"]
+        out["Altitude2Decoded"] = alts_df["altitude_2"]
+
     return out
+
+
+def decode_path_terminator(code: str | None) -> str:
+    """Decode ARINC 424 Procedure Path Terminator codes into descriptive descriptions."""
+    if not code:
+        return f"Unknown ({code})"
+
+    terminators = {
+        "AF": "DME Arc to Fix",
+        "CA": "Course to Altitude",
+        "CD": "Course to DME Distance",
+        "CF": "Course to Fix",
+        "CI": "Course to Intercept",
+        "CR": "Course to Radial",
+        "DF": "Direct to Fix",
+        "FA": "Fix to Altitude",
+        "FC": "Fix to DME Distance",
+        "FD": "Fix to DME Distance (Deprecated)",
+        "FM": "Fix to Manual Termination",
+        "HA": "Hold to Altitude",
+        "HF": "Hold to Fix",
+        "HM": "Hold to Manual Termination",
+        "IF": "Initial Fix",
+        "PI": "Procedure Turn to Intercept",
+        "RF": "Radius to Fix (Arc)",
+        "TF": "Track to Fix",
+        "VA": "Heading to Altitude",
+        "VD": "Heading to DME Distance",
+        "VI": "Heading to Intercept",
+        "VM": "Heading to Manual Termination",
+        "VR": "Heading to Radial",
+    }
+    return terminators.get(code.strip().upper(), f"Unknown ({code})")
+
+
+def decode_turn_direction(code: str | None) -> str:
+    """Decode turn direction indicator (L/R)."""
+    if not code:
+        return "None/Straight"
+
+    code = code.strip().upper()
+    if code == "L":
+        return "Left"
+    elif code == "R":
+        return "Right"
+    return "None/Straight"
+
+
+def decode_altitude_descriptor(desc: str, alt1: str, alt2: str) -> dict[str, Any]:
+    """Decode altitude restriction descriptors and values (+, -, @, B)."""
+    desc = desc.strip().upper()
+    descriptors = {
+        "@": "At",
+        "+": "At or Above",
+        "-": "At or Below",
+        "B": "Between",
+    }
+    return {
+        "descriptor": descriptors.get(desc, desc),
+        "altitude_1": alt1.strip(),
+        "altitude_2": alt2.strip() if desc == "B" else None,
+    }
+
+
+def decode_procedure_leg_row(row: pd.Series) -> dict[str, Any]:
+    """Take a procedure leg DataFrame row and enrich it with decoded human-readable instructions."""
+    path_term = row.get("PathTerminator", "")
+    turn_dir = row.get("TurnDirection", "")
+    fly_over = row.get(
+        "RecommendedNavaid", ""
+    )  # Or appropriate fly-over field from schema
+
+    return {
+        "PathTerminatorDescription": decode_path_terminator(path_term),
+        "TurnDirectionFull": decode_turn_direction(turn_dir),
+    }
