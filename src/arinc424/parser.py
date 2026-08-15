@@ -114,6 +114,110 @@ def parse_arinc_file(
     return schema_name, merged
 
 
+def parse_all(
+    file_path: str | Path,
+    merge_continuations: bool = True,
+) -> dict[str, pd.DataFrame]:
+    """Read an entire ARINC 424 file in a single pass, route each line by its
+
+    section/subsection code, and return a dictionary of DataFrames mapped by schema name.
+    """
+    path = Path(file_path)
+    if not path.exists():
+        raise FileNotFoundError(f"File not found: {path}")
+
+    # Handle empty files gracefully before mmaping
+    if path.stat().st_size == 0:
+        return {}
+
+    # Bucket lines by (section, subsection) or schema name
+    schema_lines: dict[str, list[str]] = {}
+
+    with open(path, "r", encoding="utf-8", errors="ignore") as f:
+        with mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) as mm:
+            for line_bytes in iter(mm.readline, b""):
+                line_str = (
+                    line_bytes.decode("ascii", errors="ignore")
+                    .replace("\xa0", " ")
+                    .rstrip("\r\n")
+                )
+                if len(line_str) >= 5:
+                    sec = line_str[3:4]
+                    subsec = line_str[4:5]
+
+                    # Lookup schema name from registry routing
+                    schema_name = _REGISTRY.routing.get(sec, {}).get(subsec)
+                    if not schema_name:
+                        continue
+
+                    schema_lines.setdefault(schema_name, []).append(line_str + "\n")
+
+    datasets: dict[str, pd.DataFrame] = {}
+
+    for schema_name, lines in schema_lines.items():
+        schema = _REGISTRY.schemas.get(schema_name)
+        if not schema or not lines:
+            continue
+
+        df_all = pd.read_fwf(
+            io.StringIO("".join(lines)),
+            index_col=False,
+            colspecs=schema["colspecs"],
+            header=None,
+            names=schema["names"],
+            dtype=str,
+        )
+
+        # Clean string whitespace and sentinel values
+        for col in df_all.columns:
+            df_all[col] = df_all[col].fillna("").astype(str).str.strip()
+            df_all[col] = df_all[col].replace(["nan", "None", "<NA>"], "")
+
+        if not merge_continuations:
+            datasets[schema_name] = df_all
+            continue
+
+        cont_fields = _REGISTRY.continuation_rules.get(schema_name)
+        if not cont_fields or "ContinuationRecordNo" not in df_all.columns:
+            datasets[schema_name] = df_all
+            continue
+
+        base_mask = df_all["ContinuationRecordNo"].eq("")
+        df_base = df_all[base_mask].copy()
+        df_cont = df_all[~base_mask].copy()
+
+        if df_cont.empty or "FileRecordNo" not in df_base.columns:
+            datasets[schema_name] = df_base
+            continue
+
+        existing_cont_fields = [f for f in cont_fields if f in df_cont.columns]
+        if not existing_cont_fields:
+            datasets[schema_name] = df_base
+            continue
+
+        cont_grouped = (
+            df_cont.groupby("FileRecordNo")[existing_cont_fields]
+            .agg(lambda cols: " ".join(v for v in cols if v.strip()))
+            .reset_index()
+        )
+
+        merged = df_base.merge(
+            cont_grouped, on="FileRecordNo", how="left", suffixes=("", "_cont")
+        )
+
+        for field in existing_cont_fields:
+            cont_col = f"{field}_cont"
+            if cont_col in merged.columns:
+                base_val = merged[field].fillna("").astype(str).str.strip()
+                val_cont = merged[cont_col].fillna("").astype(str).str.strip()
+                merged[field] = (base_val + " " + val_cont).str.strip()
+                merged.drop(columns=[cont_col], inplace=True)
+
+        datasets[schema_name] = merged
+
+    return datasets
+
+
 def stream_arinc_file(
     file_path: str | Path,
     record_filter: str,

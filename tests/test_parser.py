@@ -308,3 +308,122 @@ def test_parse_arinc_file_short_filter_error(tmp_path: Path):
     p.write_text("some data\n", encoding="utf-8")
     with pytest.raises(ValueError):
         parser.parse_arinc_file(p, record_filter="E")
+
+
+def test_parse_all_basic(tmp_path: Path):
+    p = tmp_path / "all.arinc"
+    p.write_text(
+        build_line("REC", "E", "A", "00001", "", "WP1")
+        + "\n"
+        + build_line("REC", "P", "A", "00002", "", "APT")
+        + "\n"
+        + build_line("REC", "D", " ", "00003", "", "NAV")
+        + "\n",
+        encoding="utf-8",
+    )
+
+    datasets = parser.parse_all(p)
+
+    assert set(datasets.keys()) == {"Waypoints", "Airports", "Navaids"}
+    assert datasets["Waypoints"].iloc[0]["Name"] == "WP1"
+    assert datasets["Airports"].iloc[0]["Name"] == "APT"
+    assert datasets["Navaids"].iloc[0]["Name"].strip() == "NAV"
+
+
+def test_parse_all_empty_file(tmp_path: Path):
+    p = tmp_path / "empty.arinc"
+    p.write_text("", encoding="utf-8")
+
+    datasets = parser.parse_all(p)
+    assert datasets == {}
+
+
+def test_parse_all_ignores_unrouted(tmp_path: Path):
+    p = tmp_path / "unrouted.arinc"
+    p.write_text("XXXZZFOO\nYYYQQBAR\n", encoding="utf-8")
+
+    datasets = parser.parse_all(p)
+    assert datasets == {}
+
+
+def test_parse_all_continuations(tmp_path: Path):
+    p = tmp_path / "cont.arinc"
+    base = build_line("REC", "E", "A", "00001", "", "BASE")
+    cont = build_line("REC", "E", "A", "00001", "01", "CONT")
+    p.write_text(base + "\n" + cont + "\n", encoding="utf-8")
+
+    datasets = parser.parse_all(p)
+    df = datasets["Waypoints"]
+
+    assert len(df) == 1
+    assert df.iloc[0]["Name"] == "BASE CONT"
+
+
+def test_parse_all_no_continuations_flag(tmp_path: Path):
+    p = tmp_path / "nocont.arinc"
+    base = build_line("REC", "E", "A", "00001", "", "BASE")
+    cont = build_line("REC", "E", "A", "00001", "01", "CONT")
+    p.write_text(base + "\n" + cont + "\n", encoding="utf-8")
+
+    datasets = parser.parse_all(p, merge_continuations=False)
+    df = datasets["Waypoints"]
+
+    assert len(df) == 2
+
+
+def test_parse_all_skips_short_lines(tmp_path: Path):
+    p = tmp_path / "short.arinc"
+    p.write_text("HDR\nA\nB\n", encoding="utf-8")
+
+    datasets = parser.parse_all(p)
+    assert datasets == {}
+
+
+import pytest
+
+
+@pytest.mark.parametrize(
+    "section,subsection,schema",
+    [
+        ("E", "A", "Waypoints"),
+        ("E", "R", "Airways"),
+        ("P", "A", "Airports"),
+        ("P", "L", "ProcedureLegs"),
+        ("D", " ", "Navaids"),
+        ("U", "F", "Airspace"),
+        ("U", "B", "AirspaceBoundaries"),
+        ("C", "R", "CompanyRoutes"),
+        ("C", "L", "CompanyRouteLegs"),
+        ("H", "P", "HeliportProcedures"),
+        ("G", "M", "GridMora"),
+        ("G", "A", "Avionics"),
+        ("R", "C", "Communications"),
+        ("R", "E", "CommunicationsExtended"),
+    ],
+)
+def test_parse_all_routing_parametrized(tmp_path: Path, section, subsection, schema):
+    p = tmp_path / "param.arinc"
+    line = build_line("REC", section, subsection, "00001", "", "NAME")
+    p.write_text(line + "\n", encoding="utf-8")
+
+    datasets = parser.parse_all(p)
+    assert schema in datasets
+    assert datasets[schema].iloc[0]["Name"] == "NAME"
+
+
+def test_parse_all_mixed_continuations(tmp_path: Path):
+    p = tmp_path / "mixed.arinc"
+    p.write_text(
+        build_line("REC", "E", "A", "00001", "", "BASE")
+        + "\n"
+        + build_line("REC", "E", "A", "00001", "01", "CONT")
+        + "\n"
+        + build_line("REC", "P", "A", "00002", "", "APT")
+        + "\n",
+        encoding="utf-8",
+    )
+
+    datasets = parser.parse_all(p)
+
+    assert datasets["Waypoints"].iloc[0]["Name"] == "BASE CONT"
+    assert datasets["Airports"].iloc[0]["Name"] == "APT"
