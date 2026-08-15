@@ -1,8 +1,8 @@
 # ARINC 424‑20 Parser
 
-A modern, schema‑driven ARINC 424 navigation data parser supporting full file decoding, validation, and structured DataFrame output.
+A schema‑driven ARINC 424 navigation data parser supporting full file decoding, validation, GIS coordinate export, and structured DataFrame output.
 
-This project is a modernization and expansion of [varnav/pyarinc424](https://github.com/varnav/pyarinc424), adding ARINC 424‑18/19/20 schema support, full file parsing, DataFrame output, validation, and an extended CLI.
+This project expands [varnav/pyarinc424](https://github.com/varnav/pyarinc424) with ARINC 424‑18/19/20 schema support, full file parsing, pandas DataFrame output, geographic data exports (GeoJSON/CSV), validation, and an extended CLI.
 
 ## Installation
 
@@ -13,11 +13,12 @@ pip install -e .[test]
 
 ## Features
 
-- Record parsing for ARINC 424 fixed‑width data files into pandas DataFrames and typed objects.
-- Schema definitions for ARINC 424‑18, 424‑19, and 424‑20.
-- Coordinate and field decoding for ARINC formats.
-- Header parsing for AIRAC cycle information and file metadata.
-- CLI interface for parsing, validation, schema inspection, and JSON export.
+* Record parsing for ARINC 424 fixed‑width data files into pandas DataFrames and typed objects.
+* Schema definitions for ARINC 424‑18, 424‑19, and 424‑20.
+* Coordinate and field decoding for ARINC formats with fallback handling.
+* GIS integration and export utilities (GeoJSON point features).
+* Header parsing for AIRAC cycle information and file metadata.
+* CLI interface for parsing, validation, schema inspection, and GeoJSON/JSON export.
 
 ## Usage
 
@@ -35,6 +36,7 @@ header = a.read_header("path/to/arinc424.txt")
 ```bash
 arinc424 --help
 arinc424 parse path/to/arinc424.txt --output out.json
+arinc424 parse path/to/arinc424.txt -F geojson -o out.geojson
 arinc424 parse path/to/arinc424.txt --model
 arinc424 schemas
 arinc424 header path/to/arinc424.txt
@@ -42,26 +44,28 @@ arinc424 header path/to/arinc424.txt
 
 ## Supported Record Types
 
-- Waypoints  
-- Airways  
-- Airspace  
-- Airspace boundaries  
-- Airports and airport infrastructure  
-- Communications  
-- Extended communications  
-- Navigation aids  
-- Company routes  
-- Company route legs  
-- Procedures  
-- Procedure legs  
-- Heliport procedures  
-- Grid MORA  
-- Avionics and general aviation
+* Waypoints
+* Airways
+* Airspace
+* Airspace boundaries
+* Airports and airport infrastructure
+* Communications
+* Extended communications
+* Navigation aids
+* Company routes
+* Company route legs
+* Procedures
+* Procedure legs
+* Heliport procedures
+* Grid MORA
+* Avionics and general aviation
 
 ## Schema System
 
-Schemas are defined in YAML files under `src/arinc424/schemas/`.  
-Routing rules are defined in `routing.json`.  
+Schemas are defined in YAML files under `src/arinc424/schemas/`.
+
+Routing rules are defined in `routing.json`.
+
 Continuation rules are defined in `continuations.json`.
 
 ## Validation

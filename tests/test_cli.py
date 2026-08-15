@@ -355,3 +355,67 @@ def test_parse_parquet_stdout_warning(tmp_path, runner, monkeypatch):
 
     result = runner.invoke(cli, ["parse", str(p), "-f", "EA", "-F", "parquet"])
     assert "Parquet format stdout preview not supported" in result.output
+
+
+def test_parse_export_geojson(tmp_path, runner, monkeypatch):
+    p = tmp_path / "file.arinc"
+    out = tmp_path / "out.geojson"
+    p.write_text(build_line("REC", "E", "A", "00001", "", "WP1") + "\n")
+
+    df = pd.DataFrame(
+        [
+            {
+                "RecordType": "REC",
+                "Section": "E",
+                "Subsection": "A",
+                "FileRecordNo": "00001",
+                "ContinuationRecordNo": "",
+                "Latitude": "N10000000",
+                "Longitude": "E02000000",
+                "Latitude_decimal": 10.0,
+                "Longitude_decimal": 20.0,
+                "Name": "WP1",
+            }
+        ]
+    )
+    monkeypatch.setattr(
+        parser, "parse_arinc_file", lambda f, record_filter: ("Waypoints", df)
+    )
+    # Return a DataFrame that already includes the decimal columns
+    monkeypatch.setattr("arinc424.cli.apply_decoders", lambda d: df)
+
+    result = runner.invoke(
+        cli, ["parse", str(p), "-f", "EA", "-F", "geojson", "-o", str(out)]
+    )
+    assert out.exists()
+    data = json.loads(out.read_text())
+    assert data["type"] == "FeatureCollection"
+    assert len(data["features"]) == 1
+    assert data["features"][0]["geometry"]["coordinates"] == [20.0, 10.0]
+
+
+def test_parse_geojson_stdout(tmp_path, runner, monkeypatch):
+    p = tmp_path / "file.arinc"
+    p.write_text(build_line("REC", "E", "A", "00001", "", "WP1") + "\n")
+
+    df = pd.DataFrame(
+        [
+            {
+                "RecordType": "REC",
+                "Section": "E",
+                "Subsection": "A",
+                "FileRecordNo": "00001",
+                "ContinuationRecordNo": "",
+                "Latitude": 10.0,
+                "Longitude": 20.0,
+                "Name": "WP1",
+            }
+        ]
+    )
+    monkeypatch.setattr(
+        parser, "parse_arinc_file", lambda f, record_filter: ("Waypoints", df)
+    )
+
+    result = runner.invoke(cli, ["parse", str(p), "-f", "EA", "-F", "geojson"])
+    assert result.exit_code == 0
+    assert "FeatureCollection" in result.output
