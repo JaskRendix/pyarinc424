@@ -1,5 +1,6 @@
 import json
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 
 import click
@@ -8,7 +9,7 @@ import pytest
 from click.testing import CliRunner
 
 from arinc424 import parser
-from arinc424.cli import cli
+from arinc424.cli import _json_default, cli
 
 
 def build_line(record_type, section, subsection, fileno, contno, name):
@@ -62,7 +63,7 @@ class DummyRegistry:
 @pytest.fixture(autouse=True)
 def patch_registry(monkeypatch):
     dummy = DummyRegistry()
-    monkeypatch.setattr("arinc424.cli._REGISTRY", dummy)
+    monkeypatch.setattr("arinc424.cli.get_registry", lambda: dummy)
     monkeypatch.setattr("arinc424.parser._REGISTRY", dummy)
     return dummy
 
@@ -268,3 +269,89 @@ def test_parse_file_not_found(runner):
 def test_header_file_not_found(runner):
     result = runner.invoke(cli, ["header", "missing.arinc"])
     assert result.exit_code != 0
+
+
+def test_parse_strict_validation_error(tmp_path, runner, monkeypatch):
+    p = tmp_path / "file.arinc"
+    p.write_text("REC\n")
+
+    df = pd.DataFrame([{"RecordType": "REC", "Name": "WP1"}])
+    monkeypatch.setattr(
+        parser, "parse_arinc_file", lambda f, record_filter: ("Waypoints", df)
+    )
+
+    # Mock the validation function used in cli.py to return validation errors
+    import arinc424.cli as cli_module
+
+    monkeypatch.setattr(
+        cli_module,
+        "validate_dataframe_schema",
+        lambda section_name, df: ["Schema validation error: invalid field"],
+    )
+
+    result = runner.invoke(cli, ["parse", str(p), "-f", "EA", "--strict"])
+    assert result.exit_code != 0
+    assert "strict mode" in result.output
+
+
+def test_json_default_serializer():
+    assert _json_default(date(2026, 6, 1)) == "2026-06-01"
+    assert sorted(_json_default({"a", "b"})) == [
+        "a",
+        "b",
+    ]  # Sort to handle set order deterministically
+    assert _json_default(12345) == "12345"
+
+
+def test_parse_export_csv(tmp_path, runner, monkeypatch):
+    p = tmp_path / "file.arinc"
+    out = tmp_path / "out.csv"
+    p.write_text(build_line("REC", "E", "A", "00001", "", "WP1") + "\n")
+
+    df = pd.DataFrame(
+        [
+            {
+                "RecordType": "REC",
+                "Section": "E",
+                "Subsection": "A",
+                "FileRecordNo": "00001",
+                "ContinuationRecordNo": "",
+                "Name": "WP1",
+            }
+        ]
+    )
+    monkeypatch.setattr(
+        parser, "parse_arinc_file", lambda f, record_filter: ("Waypoints", df)
+    )
+
+    result = runner.invoke(
+        cli, ["parse", str(p), "-f", "EA", "-F", "csv", "-o", str(out)]
+    )
+    assert out.exists()
+    content = out.read_text()
+    assert "RecordType" in content
+    assert "WP1" in content
+
+
+def test_parse_parquet_stdout_warning(tmp_path, runner, monkeypatch):
+    p = tmp_path / "file.arinc"
+    p.write_text(build_line("REC", "E", "A", "00001", "", "WP1") + "\n")
+
+    df = pd.DataFrame(
+        [
+            {
+                "RecordType": "REC",
+                "Section": "E",
+                "Subsection": "A",
+                "FileRecordNo": "00001",
+                "ContinuationRecordNo": "",
+                "Name": "WP1",
+            }
+        ]
+    )
+    monkeypatch.setattr(
+        parser, "parse_arinc_file", lambda f, record_filter: ("Waypoints", df)
+    )
+
+    result = runner.invoke(cli, ["parse", str(p), "-f", "EA", "-F", "parquet"])
+    assert "Parquet format stdout preview not supported" in result.output
